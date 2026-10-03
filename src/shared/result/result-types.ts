@@ -9,7 +9,7 @@ export interface ResultFailed<TErrorCode> {
 
 export interface ResultError<TErrorCode> {
     code: TErrorCode,
-    message: string
+    message?: string
 }
 
 export type ResultPromise<TData = unknown, TErrorCode = string> = Promise<Result<TData, TErrorCode>>
