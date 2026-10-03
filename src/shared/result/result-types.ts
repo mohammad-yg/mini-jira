@@ -8,8 +8,18 @@ export interface ResultFailed<TErrorCode> {
 
 
 export interface ResultError<TErrorCode> {
-    code: TErrorCode,
+    code: BasicErrorCode | TErrorCode,
     message?: string
 }
+
+export type BasicErrorCode =
+    | 'unknown'
+    | 'validation'
+    | 'unauthenticated'
+    | 'unauthorized'
+    | 'forbidden'
+    | 'not_found'
+    | 'conflict'
+    | 'internal';
 
 export type ResultPromise<TData = unknown, TErrorCode = string> = Promise<Result<TData, TErrorCode>>
