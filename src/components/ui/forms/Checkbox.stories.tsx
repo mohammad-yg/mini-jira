@@ -6,6 +6,6 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  render: () => <UI.Checkbox /> ,
+  render: () => <label className="flex items-center gap-2 text-sm"><UI.Checkbox defaultChecked />Notify me when a task is assigned</label>,
 }
 

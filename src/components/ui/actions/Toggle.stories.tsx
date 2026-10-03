@@ -6,6 +6,6 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  render: () => <UI.Toggle /> ,
+  render: () => <UI.Toggle aria-label="Bold" defaultPressed><span className="font-bold">B</span></UI.Toggle>,
 }
 

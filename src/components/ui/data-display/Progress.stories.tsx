@@ -6,6 +6,6 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  render: () => <UI.Progress /> ,
+  render: () => <UI.Progress value={64} className="w-full max-w-sm"><UI.ProgressLabel>Sprint completion</UI.ProgressLabel><UI.ProgressValue /></UI.Progress>,
 }
 

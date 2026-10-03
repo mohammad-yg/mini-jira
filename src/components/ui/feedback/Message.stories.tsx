@@ -6,6 +6,6 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  render: () => <UI.Message /> ,
+  render: () => <UI.MessageGroup className="max-w-lg"><UI.Message><UI.MessageAvatar name="Alex Morgan" /><UI.MessageContent>Can we move the review to tomorrow morning?</UI.MessageContent><UI.MessageFooter>Alex · 10:42 AM</UI.MessageFooter></UI.Message><UI.Message><UI.MessageAvatar name="You" /><UI.MessageContent>Sure, I’ll update the sprint plan.</UI.MessageContent><UI.MessageFooter>You · 10:45 AM</UI.MessageFooter></UI.Message></UI.MessageGroup>,
 }
 

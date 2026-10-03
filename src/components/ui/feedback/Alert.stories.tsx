@@ -6,6 +6,6 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  render: () => <UI.Alert /> ,
+  render: () => <UI.Alert className="max-w-lg"><UI.AlertTitle>Changes saved</UI.AlertTitle><UI.AlertDescription>Your project settings have been updated.</UI.AlertDescription><UI.AlertAction>View project</UI.AlertAction></UI.Alert>,
 }
 

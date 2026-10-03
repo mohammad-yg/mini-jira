@@ -6,6 +6,6 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  render: () => <UI.Input /> ,
+  render: () => <div className="grid w-full max-w-sm gap-2"><label htmlFor="story-email" className="text-sm font-medium">Email address</label><UI.Input id="story-email" type="email" placeholder="you@example.com" defaultValue="alex@northstar.dev" /></div>,
 }
 

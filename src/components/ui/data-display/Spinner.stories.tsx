@@ -6,6 +6,6 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  render: () => <UI.Spinner /> ,
+  render: () => <div className="flex items-center gap-3"><UI.Spinner /><span className="text-sm text-muted-foreground">Loading tasks…</span></div>,
 }
 

@@ -6,6 +6,6 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  render: () => <UI.Badge /> ,
+  render: () => <div className="flex flex-wrap gap-2"><UI.Badge>In progress</UI.Badge><UI.Badge variant="secondary">Design</UI.Badge><UI.Badge variant="outline">Backlog</UI.Badge></div>,
 }
 

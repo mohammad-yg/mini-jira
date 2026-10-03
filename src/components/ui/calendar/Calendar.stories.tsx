@@ -6,6 +6,6 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  render: () => <UI.Calendar /> ,
+  render: () => <UI.Calendar mode="single" selected={new Date(2026, 9, 3)} />,
 }
 

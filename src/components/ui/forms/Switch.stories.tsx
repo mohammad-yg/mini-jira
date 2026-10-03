@@ -6,6 +6,6 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  render: () => <UI.Switch /> ,
+  render: () => <label className="flex items-center gap-3"><UI.Switch defaultChecked /><span><span className="block text-sm font-medium">Email notifications</span><span className="block text-xs text-muted-foreground">Receive updates about your assigned tasks.</span></span></label>,
 }
 

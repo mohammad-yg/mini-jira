@@ -6,6 +6,6 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  render: () => <UI.Textarea /> ,
+  render: () => <div className="grid w-full max-w-sm gap-2"><label htmlFor="story-description" className="text-sm font-medium">Description</label><UI.Textarea id="story-description" placeholder="Describe the task..." defaultValue="Update the onboarding flow for new team members." /></div>,
 }
 

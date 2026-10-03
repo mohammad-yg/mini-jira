@@ -6,6 +6,6 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  render: () => <UI.Button /> ,
+  render: () => <UI.Button>Save changes</UI.Button>,
 }
 

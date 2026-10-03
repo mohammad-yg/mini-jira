@@ -6,6 +6,6 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  render: () => <UI.Marker /> ,
+  render: () => <UI.Marker><UI.MarkerIcon><span className="size-2 rounded-full bg-emerald-500" /></UI.MarkerIcon><UI.MarkerContent>On track</UI.MarkerContent></UI.Marker>,
 }
 

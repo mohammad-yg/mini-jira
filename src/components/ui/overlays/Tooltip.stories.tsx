@@ -6,6 +6,6 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  render: () => <UI.Tooltip /> ,
+  render: () => <UI.TooltipProvider><UI.Tooltip><UI.TooltipTrigger render={<button className="rounded-md border px-3 py-2 text-sm" />}>Copy task link</UI.TooltipTrigger><UI.TooltipContent>Copy link to clipboard</UI.TooltipContent></UI.Tooltip></UI.TooltipProvider>,
 }
 

@@ -6,6 +6,6 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  render: () => <UI.Kbd /> ,
+  render: () => <span className="flex items-center gap-2 text-sm">Open search <UI.KbdGroup><UI.Kbd>⌘</UI.Kbd><UI.Kbd>K</UI.Kbd></UI.KbdGroup></span>,
 }
 

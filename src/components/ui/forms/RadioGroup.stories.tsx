@@ -6,6 +6,6 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  render: () => <UI.RadioGroup /> ,
+  render: () => <UI.RadioGroup defaultValue="board" className="grid gap-3"><label className="flex items-center gap-2 text-sm"><UI.RadioGroupItem value="board" />Board view</label><label className="flex items-center gap-2 text-sm"><UI.RadioGroupItem value="list" />List view</label></UI.RadioGroup>,
 }
 
