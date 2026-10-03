@@ -12,4 +12,4 @@ export interface ResultError<TErrorCode> {
     message: string
 }
 
-export type ResultPromise = Promise<Result>
+export type ResultPromise<TData = unknown, TErrorCode = string> = Promise<Result<TData, TErrorCode>>
