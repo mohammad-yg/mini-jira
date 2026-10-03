@@ -1,6 +1,6 @@
 import { Result, ResultError, ResultFailed } from "./result-types";
 
-export const successResult = <TData>(data: TData, message?: string): Result<TData> => ({
+export const successResult = <TData, TErrorCode>(data: TData, message?: string): Result<TData, TErrorCode> => ({
     success: true,
     data,
     message,
