@@ -6,35 +6,28 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import jwt from 'jsonwebtoken';
 import { randomUUID } from 'node:crypto';
+import type { BoardRecord, ColumnRecord, CommentRecord, IssueRecord, LabelRecord, MemberRoleRecord, ProjectRecord, RoleRecord, SprintRecord, TaskRecord, UserOutput, UserRecord } from './types.js';
+import { AUTH_ROUTES } from './cases/auth.js';
+import { PROJECTS_ROUTES } from './cases/projects.js';
+import { USERS_ROUTES } from './cases/users.js';
 
 export const records = pgTable('records', { id: text('id').primaryKey(), kind: text('kind').notNull(), data: jsonb('data').notNull() });
 export const dbClient = new PGlite();
 export const db = drizzle(dbClient, { schema: { records } });
-export const users = [
+export const users: UserRecord[] = [
  { id:'user-admin', name:'Ava Admin', email:'admin@mini-jira.local', password:'password123', role:'admin' },
  { id:'user-1', name:'Sam Product', email:'sam@mini-jira.local', password:'password123', role:'member' },
  { id:'user-2', name:'Lee Engineer', email:'lee@mini-jira.local', password:'password123', role:'member' },
 ];
-export const projects: any[] = [{ id:'project-1', name:'Mini Jira', key:'MJ', description:'Demo project', ownerId:'user-admin', memberIds:['user-admin','user-1','user-2'] }];
-export const roles: any[] = [{id:'role-admin',projectId:'project-1',name:'Admin',permissions:['*']},{id:'role-member',projectId:'project-1',name:'Member',permissions:['issues:read','issues:write']}];
-export const columns: any[] = [{id:'col-todo',projectId:'project-1',name:'To Do',statuses:['todo'],position:0},{id:'col-doing',projectId:'project-1',name:'In Progress',statuses:['in-progress'],position:1},{id:'col-done',projectId:'project-1',name:'Done',statuses:['done'],position:2}];
-export const sprints: any[] = [{id:'sprint-1',name:'Sprint 1',state:'active',projectId:'project-1'}];
-export const issues: any[] = [{id:'issue-1',key:'MJ-1',title:'Welcome issue',projectId:'project-1',type:'task',status:'todo',priority:'medium',labels:[]}];
-export const tasks: any[] = [{id:'task-1',title:'Review the board',status:'todo',priority:'medium',labels:[],columnId:'col-todo',projectId:'project-1',issueId:'issue-1',assigneeId:'user-1',sprintId:'sprint-1',position:0}];
-export const comments: any[] = [{id:'comment-1',body:'Welcome!',taskId:'task-1',authorId:'user-admin',projectId:'project-1'}];
-export const labels: any[] = [{id:'label-1',projectId:'project-1',name:'frontend',color:'#6366f1'}];
-export const API = [
- ['POST','/auth/register','Register a user'],['POST','/auth/login','Log in and receive a JWT'],['POST','/auth/logout','Revoke token'],['POST','/auth/refresh','Refresh access token'],['GET','/auth/me','Current user profile'],
- ['GET','/users','List users (admin)'],['GET','/users/:id','Get user'],['PATCH','/users/:id','Update user'],['DELETE','/users/:id','Delete user'],
- ['GET','/projects','List accessible projects'],['POST','/projects','Create project'],['GET','/projects/:id','Get project'],['PATCH','/projects/:id','Update project'],['DELETE','/projects/:id','Delete project'],['GET','/projects/:id/members','List project members'],['POST','/projects/:id/members','Add project member'],['DELETE','/projects/:id/members/:userId','Remove project member'],
- ['GET','/projects/:id/roles','List roles'],['POST','/projects/:id/roles','Create role'],['PATCH','/projects/:id/roles/:roleId','Update role'],['DELETE','/projects/:id/roles/:roleId','Delete role'],['PATCH','/projects/:id/members/:userId/role','Change member role'],
- ['GET','/projects/:id/board','Get board'],['PATCH','/projects/:id/board','Update board'],['GET','/projects/:id/board/columns','List columns'],['POST','/projects/:id/board/columns','Create column'],['PATCH','/projects/:id/board/columns/:columnId','Update column'],['DELETE','/projects/:id/board/columns/:columnId','Delete column'],['PATCH','/projects/:id/board/columns/reorder','Reorder columns'],
- ['GET','/projects/:id/sprints','List sprints'],['POST','/projects/:id/sprints','Create sprint'],['GET','/projects/:id/sprints/:sprintId','Get sprint'],['PATCH','/projects/:id/sprints/:sprintId','Update sprint'],['DELETE','/projects/:id/sprints/:sprintId','Delete sprint'],['POST','/projects/:id/sprints/:sprintId/start','Start sprint'],['POST','/projects/:id/sprints/:sprintId/complete','Complete sprint'],
- ['GET','/projects/:id/issues','List issues'],['POST','/projects/:id/issues','Create issue'],['GET','/projects/:id/issues/:issueId','Get issue'],['PATCH','/projects/:id/issues/:issueId','Update issue'],['DELETE','/projects/:id/issues/:issueId','Delete issue'],
- ['GET','/projects/:id/issues/:issueId/tasks','List issue tasks'],['POST','/projects/:id/issues/:issueId/tasks','Create task'],['GET','/projects/:id/tasks','List project tasks'],['GET','/projects/:id/tasks/:taskId','Get task'],['PATCH','/projects/:id/tasks/:taskId','Update task'],['DELETE','/projects/:id/tasks/:taskId','Delete task'],['PATCH','/projects/:id/tasks/:taskId/move','Move task'],['PATCH','/projects/:id/tasks/reorder','Reorder tasks'],
- ['GET','/projects/:id/tasks/:taskId/comments','List comments'],['POST','/projects/:id/tasks/:taskId/comments','Create comment'],['PATCH','/projects/:id/tasks/:taskId/comments/:commentId','Update comment'],['DELETE','/projects/:id/tasks/:taskId/comments/:commentId','Delete comment'],
- ['GET','/projects/:id/labels','List labels'],['POST','/projects/:id/labels','Create label'],['PATCH','/projects/:id/labels/:labelId','Update label'],['DELETE','/projects/:id/labels/:labelId','Delete label'],
-] as const;
+export const projects: ProjectRecord[] = [{ id:'project-1', name:'Mini Jira', key:'MJ', description:'Demo project', ownerId:'user-admin', memberIds:['user-admin','user-1','user-2'] }];
+export const roles: RoleRecord[] = [{id:'role-admin',projectId:'project-1',name:'Admin',permissions:['*']},{id:'role-member',projectId:'project-1',name:'Member',permissions:['issues:read','issues:write']}];
+export const columns: ColumnRecord[] = [{id:'col-todo',projectId:'project-1',name:'To Do',statuses:['todo'],position:0},{id:'col-doing',projectId:'project-1',name:'In Progress',statuses:['in-progress'],position:1},{id:'col-done',projectId:'project-1',name:'Done',statuses:['done'],position:2}];
+export const sprints: SprintRecord[] = [{id:'sprint-1',name:'Sprint 1',state:'active',projectId:'project-1'}];
+export const issues: IssueRecord[] = [{id:'issue-1',key:'MJ-1',title:'Welcome issue',projectId:'project-1',type:'task',status:'todo',priority:'medium',labels:[]}];
+export const tasks: TaskRecord[] = [{id:'task-1',title:'Review the board',status:'todo',priority:'medium',labels:[],columnId:'col-todo',projectId:'project-1',issueId:'issue-1',assigneeId:'user-1',sprintId:'sprint-1',position:0}];
+export const comments: CommentRecord[] = [{id:'comment-1',body:'Welcome!',taskId:'task-1',authorId:'user-admin',projectId:'project-1'}];
+export const labels: LabelRecord[] = [{id:'label-1',projectId:'project-1',name:'frontend',color:'#6366f1'}];
+export const API = [...AUTH_ROUTES, ...USERS_ROUTES, ...PROJECTS_ROUTES] as const;
 
 type JsonSchema = Record<string, any>;
 const textField = (description: string, extra: JsonSchema = {}): JsonSchema => ({ type:'string', description, ...extra });
@@ -103,10 +96,10 @@ function routeSchema(method: string, path: string, description: string) {
 }
 const secret = process.env.JWT_SECRET ?? 'mini-jira-dev-secret-change-me';
 const collections: Record<string, any[]> = { users, projects, roles, columns, sprints, issues, tasks, comments, labels };
-const boards: any[] = [{projectId:'project-1',name:'Mini Jira board',description:'',showCompleted:true}];
-const memberRoles: any[] = [];
+const boards: BoardRecord[] = [{projectId:'project-1',name:'Mini Jira board',description:'',showCompleted:true}];
+const memberRoles: MemberRoleRecord[] = [];
 const activeSessions = new Set<string>();
-const safeUser = (user: any) => { if (!user) return user; const {password: _password, ...safe} = user; return safe; };
+const safeUser = (user: UserRecord | undefined): UserOutput | undefined => { if (!user) return user; const {password: _password, ...safe} = user; return safe; };
 const tokenPair = (id: string) => {
  const sid=randomUUID(); activeSessions.add(sid);
  return {accessToken:jwt.sign({sub:id,sid,type:'access'},secret,{expiresIn:'1h'}),refreshToken:jwt.sign({sub:id,sid,type:'refresh'},secret,{expiresIn:'30d'})};
@@ -192,7 +185,7 @@ export async function buildApp(): Promise<FastifyInstance> {
      }
      if(path.startsWith('/projects/') && !project)return reply.code(404).send({error:'Project not found'});
      if(method==='POST') {
-       if(path==='/projects') { if(projects.some(x=>x.key===input.key))return reply.code(409).send({error:'Project key already exists'}); const item={id:randomUUID(),...input,ownerId:userId,memberIds:[userId]}; projects.push(item); return reply.code(201).send(item); }
+       if(path==='/projects') { if(projects.some(x=>x.key===input.key))return reply.code(409).send({error:'Project key already exists'}); const item={id:randomUUID(),...input,ownerId:userId,memberIds:[userId]} as ProjectRecord; projects.push(item); return reply.code(201).send(item); }
        if(path.endsWith('/members')) { const user=users.find(x=>x.id===input.userId); if(!user)return reply.code(404).send({error:'User not found'}); if(!project!.memberIds.includes(user.id))project!.memberIds.push(user.id); return reply.code(201).send(safeUser(user)); }
        if(path.endsWith('/start') || path.endsWith('/complete')) { const sprint=sprints.find(x=>x.id===p.sprintId&&x.projectId===p.id); if(!sprint)return reply.code(404).send({error:'Sprint not found'}); sprint.state=path.endsWith('/start')?'active':'completed'; return sprint; }
        const item:any={id:randomUUID(),...input,projectId:p.id};
