@@ -1,7 +1,9 @@
 import type { ApiRouteDefinition } from "../types.js";
 import type { ApiErrorOutput, ApiOutput, UserOutput } from "../types.js";
 
-export type UsersCaseOutput = ApiOutput<ApiErrorOutput | UserOutput | UserOutput[] | null>;
+export type UsersCaseOutput = ApiOutput<
+  ApiErrorOutput | UserOutput | UserOutput[] | null
+>;
 
 export const USERS_ROUTES = [
   ["GET", "/users", "List users (admin)"],

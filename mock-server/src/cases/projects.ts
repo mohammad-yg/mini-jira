@@ -1,5 +1,19 @@
 import type { ApiRouteDefinition } from "../types.js";
-import type { ApiErrorOutput, ApiOutput, BoardRecord, ColumnRecord, CommentRecord, IssueRecord, LabelRecord, MemberRoleRecord, ProjectRecord, RoleRecord, SprintRecord, TaskRecord, UserOutput } from "../types.js";
+import type {
+  ApiErrorOutput,
+  ApiOutput,
+  BoardRecord,
+  ColumnRecord,
+  CommentRecord,
+  IssueRecord,
+  LabelRecord,
+  MemberRoleRecord,
+  ProjectRecord,
+  RoleRecord,
+  SprintRecord,
+  TaskRecord,
+  UserOutput,
+} from "../types.js";
 
 export type ProjectsCaseOutput = ApiOutput<
   | ApiErrorOutput
@@ -70,8 +84,16 @@ export const PROJECTS_ROUTES = [
   ["PATCH", "/projects/:id/tasks/reorder", "Reorder tasks"],
   ["GET", "/projects/:id/tasks/:taskId/comments", "List comments"],
   ["POST", "/projects/:id/tasks/:taskId/comments", "Create comment"],
-  ["PATCH", "/projects/:id/tasks/:taskId/comments/:commentId", "Update comment"],
-  ["DELETE", "/projects/:id/tasks/:taskId/comments/:commentId", "Delete comment"],
+  [
+    "PATCH",
+    "/projects/:id/tasks/:taskId/comments/:commentId",
+    "Update comment",
+  ],
+  [
+    "DELETE",
+    "/projects/:id/tasks/:taskId/comments/:commentId",
+    "Delete comment",
+  ],
   ["GET", "/projects/:id/labels", "List labels"],
   ["POST", "/projects/:id/labels", "Create label"],
   ["PATCH", "/projects/:id/labels/:labelId", "Update label"],

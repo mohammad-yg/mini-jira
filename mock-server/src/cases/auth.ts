@@ -1,7 +1,15 @@
 import type { ApiRouteDefinition } from "../types.js";
-import type { ApiErrorOutput, ApiOutput, AuthOutput, RefreshOutput, UserOutput } from "../types.js";
+import type {
+  ApiErrorOutput,
+  ApiOutput,
+  AuthOutput,
+  RefreshOutput,
+  UserOutput,
+} from "../types.js";
 
-export type AuthCaseOutput = ApiOutput<AuthOutput | ApiErrorOutput | RefreshOutput | UserOutput | null>;
+export type AuthCaseOutput = ApiOutput<
+  AuthOutput | ApiErrorOutput | RefreshOutput | UserOutput | null
+>;
 
 export const AUTH_ROUTES = [
   ["POST", "/auth/register", "Register a user"],
