@@ -2,11 +2,11 @@ import { createErrorApiResponse, createSuccessApiResponse } from "./api-response
 import type { ApiClient, ApiQuery, ApiRequestConfig, ApiRequestOptions } from "./api-client-types";
 import type { ApiResponse, ApiResponseError } from "./api-response-types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
+const DEFAULT_API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
 
-const buildUrl = (path: string, query?: ApiQuery): string => {
+const buildUrl = (path: string, query: ApiQuery | undefined, apiBaseUrl: string): string => {
     const isAbsolute = /^[a-z][a-z\d+.-]*:\/\//i.test(path);
-    const baseUrl = isAbsolute ? undefined : API_BASE_URL.replace(/\/+$/, "") + "/";
+    const baseUrl = isAbsolute ? undefined : apiBaseUrl.replace(/\/+$/, "") + "/";
     const relativeBase = baseUrl && !/^[a-z][a-z\d+.-]*:\/\//i.test(baseUrl);
     const url = new URL(
         isAbsolute ? path : path.replace(/^\/+/, ""),
@@ -68,6 +68,7 @@ const errorFromResponse = (status: number, payload: unknown): ApiResponseError =
 const request = async <TData, TBody>(
     path: string,
     config: ApiRequestConfig<TBody>,
+    apiBaseUrl: string,
 ): Promise<ApiResponse<TData>> => {
     const headers = new Headers(config.headers);
     headers.set("Accept", "application/json");
@@ -78,7 +79,7 @@ const request = async <TData, TBody>(
     }
 
     try {
-        const response = await fetch(buildUrl(path, config.query), {
+        const response = await fetch(buildUrl(path, config.query, apiBaseUrl), {
             method: config.method,
             headers,
             body: hasBody ? JSON.stringify(config.body) : undefined,
@@ -101,15 +102,24 @@ const request = async <TData, TBody>(
     }
 };
 
-const withMethod = (method: ApiRequestConfig["method"]) =>
-    <TData, TBody = unknown>(url: string, body?: TBody, options: ApiRequestOptions = {}) =>
-        request<TData, TBody>(url, { ...options, method, body });
+export const createApiClient = (apiBaseUrl = DEFAULT_API_BASE_URL): ApiClient => {
+    const requestFromBase = <TData = unknown, TBody = unknown>(
+        url: string,
+        config: ApiRequestConfig<TBody>,
+    ) => request<TData, TBody>(url, config, apiBaseUrl);
 
-export const apiClient: ApiClient = {
-    request,
-    get: (url, options = {}) => request(url, { ...options, method: "GET" }),
-    post: withMethod("POST"),
-    put: withMethod("PUT"),
-    patch: withMethod("PATCH"),
-    delete: (url, options = {}) => request(url, { ...options, method: "DELETE", body: options.body }),
+    const withMethod = (method: ApiRequestConfig["method"]) =>
+        <TData = unknown, TBody = unknown>(url: string, body?: TBody, options: ApiRequestOptions = {}) =>
+            requestFromBase<TData, TBody>(url, { ...options, method, body });
+
+    return {
+        request: requestFromBase,
+        get: (url, options = {}) => requestFromBase(url, { ...options, method: "GET" }),
+        post: withMethod("POST"),
+        put: withMethod("PUT"),
+        patch: withMethod("PATCH"),
+        delete: (url, options = {}) => requestFromBase(url, { ...options, method: "DELETE", body: options.body }),
+    };
 };
+
+export const apiClient = createApiClient();
