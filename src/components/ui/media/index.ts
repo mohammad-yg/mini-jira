@@ -1,3 +1,3 @@
-export * from "./Attachment"
-export * from "./Bubble"
-export * from "./Carousel"
+export * from "./Attachment";
+export * from "./Bubble";
+export * from "./Carousel";
