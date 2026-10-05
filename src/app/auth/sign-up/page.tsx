@@ -1,5 +1,5 @@
 import { AuthRegister } from "@/auth/containers/AuthRegister"
 
-export default function RegisterPage() {
+export default function SignUpPage() {
     return <AuthRegister />
 }

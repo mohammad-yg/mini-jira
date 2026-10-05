@@ -1,5 +1,6 @@
 import { auth } from "@/auth"
 import { NextResponse } from "next/server"
+import paths from "./lib/paths"
 
 export default auth((request) => {
     const pathname = request.nextUrl.pathname
@@ -9,7 +10,7 @@ export default auth((request) => {
         return NextResponse.next()
     }
 
-    return NextResponse.redirect(new URL("/auth/login", request.url))
+    return NextResponse.redirect(new URL(paths.auth.signIn, request.url))
 })
 
 export const config = {

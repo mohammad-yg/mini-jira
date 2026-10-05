@@ -2,6 +2,7 @@ import type { ComponentProps, SubmitEventHandler } from "react"
 import { Button } from "@/components/ui/actions/Button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/data-display/Card"
 import { Checkbox } from "@/components/ui/forms/Checkbox"
+import paths from "@/lib/paths"
 import { AuthField } from "./AuthField"
 import { AuthSocialButton } from "./AuthSocialButton"
 
@@ -33,7 +34,7 @@ export function AuthLoginForm({ onSubmit, emailInputProps, passwordInputProps, e
                     <label className="flex items-center gap-2 text-sm text-muted-foreground"><Checkbox defaultChecked />Remember me for 30 days</label>
                     {errors.form ? <p role="alert" className="text-sm text-destructive">{errors.form}</p> : null}
                     <Button type="submit" className="w-full" disabled={isSubmitting}>{isSubmitting ? "Signing in…" : "Sign in"}</Button>
-                    <p className="text-center text-sm text-muted-foreground">New to Mini Jira? <a className="font-medium text-foreground underline-offset-4 hover:underline" href="/auth/register">Create an account</a></p>
+                    <p className="text-center text-sm text-muted-foreground">New to Mini Jira? <a className="font-medium text-foreground underline-offset-4 hover:underline" href={paths.auth.signUp}>Create an account</a></p>
                 </form>
             </CardContent>
         </Card>

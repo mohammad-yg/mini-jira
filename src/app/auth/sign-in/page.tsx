@@ -1,5 +1,5 @@
 import { AuthLogin } from "@/auth/containers/AuthLogin"
 
-export default function LoginPage() {
+export default function SignInPage() {
     return <AuthLogin />
 }
