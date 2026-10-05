@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-The API listens on `http://localhost:4000/api/v1`. Swagger UI is at `http://localhost:4000/docs`; `/health` is a public health check. Set `PORT` and `JWT_SECRET` to configure the listener and signing secret.
+The API listens on `http://localhost:4000/api/v1`. Swagger UI is at `http://localhost:4000/docs`. The health endpoint is `http://localhost:4000/health`; it currently passes through the bearer-token auth hook, so it is not publicly accessible without a token. Set `PORT` and `JWT_SECRET` to configure the listener and signing secret.
 
 ## Seed accounts
 
