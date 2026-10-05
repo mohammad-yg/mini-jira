@@ -1,0 +1,14 @@
+# Generated output and dependencies
+node_modules/
+.next/
+out/
+build/
+coverage/
+storybook-static/
+
+# Files generated or managed by package managers
+**/package-lock.json
+
+# Binary assets
+**/*.woff2
+**/*.ico
