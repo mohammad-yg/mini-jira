@@ -3,8 +3,10 @@ import type { AuthRefreshRequest } from "../types/auth-requests-types";
 import type { AuthTokens } from "../types/auth-types";
 
 type Dependencies = {
-    apiClient: ApiClient;
+  apiClient: ApiClient;
 };
 
-export const createAuthRefreshRequest = ({ apiClient }: Dependencies): AuthRefreshRequest =>
-    (refreshToken) => apiClient.post<AuthTokens>("auth/refresh", { refreshToken });
+export const createAuthRefreshRequest =
+  ({ apiClient }: Dependencies): AuthRefreshRequest =>
+  (refreshToken) =>
+    apiClient.post<AuthTokens>("auth/refresh", { refreshToken });
