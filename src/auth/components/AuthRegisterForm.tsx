@@ -31,7 +31,7 @@ export function AuthRegisterForm({ onSubmit, nameInputProps, emailInputProps, pa
                     {errors.form ? <p role="alert" className="text-sm text-destructive">{errors.form}</p> : null}
                     <Button type="submit" className="w-full" disabled={isSubmitting}>{isSubmitting ? "Creating account…" : "Create account"}</Button>
                     <p className="text-center text-xs text-muted-foreground">By continuing, you agree to our <a href="#terms" className="underline underline-offset-4">Terms of Service</a> and <a href="#privacy" className="underline underline-offset-4">Privacy Policy</a>.</p>
-                    <p className="text-center text-sm text-muted-foreground">Already have an account? <a className="font-medium text-foreground underline-offset-4 hover:underline" href="#sign-in">Sign in</a></p>
+                    <p className="text-center text-sm text-muted-foreground">Already have an account? <a className="font-medium text-foreground underline-offset-4 hover:underline" href="/auth/login">Sign in</a></p>
                 </form>
             </CardContent>
         </Card>
