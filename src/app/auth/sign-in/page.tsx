@@ -1,4 +1,4 @@
-import { AuthLogin } from "@/auth/containers/AuthLogin";
+import { AuthLogin } from "@/modules/auth/containers";
 
 export default function SignInPage() {
   return <AuthLogin />;

@@ -1,13 +1,14 @@
 import { getToken } from "next-auth/jwt";
 import type { NextRequest } from "next/server";
 import { apiClient } from "@/shared/services/api-client";
-import { createAuthLogout } from "@/auth/actions/auth-logout";
-import { createAuthRegister } from "@/auth/actions/auth-register";
-import { createAuthGetCurrentUserProfile } from "@/auth/queries/get-current-profile";
-import { createAuthGetUserProfileRequest } from "@/auth/services/auth-profile-request";
-import { createAuthLogoutRequest } from "@/auth/services/auth-logout-request";
-import { createAuthRegisterRequest } from "@/auth/services/auth-register-request";
-import type { AuthRegisterDto } from "@/auth/types/auth-types";
+import { createAuthLogout, createAuthRegister } from "@/modules/auth/actions";
+import { createAuthGetCurrentUserProfile } from "@/modules/auth/queries";
+import {
+  createAuthGetUserProfileRequest,
+  createAuthLogoutRequest,
+  createAuthRegisterRequest,
+} from "@/modules/auth/services";
+import type { AuthRegisterDto } from "@/modules/auth/types";
 
 type RouteContext = {
   params: Promise<{ authPath: string[] }>;

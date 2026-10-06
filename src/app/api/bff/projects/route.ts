@@ -1,7 +1,7 @@
 import { getToken } from "next-auth/jwt";
 import type { NextRequest } from "next/server";
 import { apiClient } from "@/shared/services/api-client";
-import type { ProjectList } from "@/projects/types";
+import type { ProjectList } from "@/modules/projects/types";
 
 export const runtime = "nodejs";
 

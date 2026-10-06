@@ -1,11 +1,13 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { apiClient } from "@/shared/services/api-client";
-import { createAuthLogin } from "@/auth/actions/auth-login";
-import { createAuthLoginRequest } from "@/auth/services/auth-login-request";
-import { createAuthLogoutRequest } from "@/auth/services/auth-logout-request";
-import { createAuthRefreshRequest } from "@/auth/services/auth-refresh-request";
-import type { AuthUser } from "@/auth/types/auth-types";
+import { createAuthLogin } from "@/modules/auth/actions";
+import {
+  createAuthLoginRequest,
+  createAuthLogoutRequest,
+  createAuthRefreshRequest,
+} from "@/modules/auth/services";
+import type { AuthUser } from "@/modules/auth/types";
 
 const accessTokenExpiresAt = (accessToken: string): number => {
   try {

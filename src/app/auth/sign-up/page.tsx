@@ -1,4 +1,4 @@
-import { AuthRegister } from "@/auth/containers/AuthRegister";
+import { AuthRegister } from "@/modules/auth/containers";
 
 export default function SignUpPage() {
   return <AuthRegister />;
