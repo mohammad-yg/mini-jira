@@ -3,16 +3,16 @@
 ## App Router and feature placement
 
 - Route files belong in `src/app/`. Keep page entry points thin and compose feature containers from them.
-- Feature-specific components, hooks, schemas, services, types, queries, and application functions belong under their feature folder (`src/auth/` is the current example).
+- Feature-specific components, containers, hooks, schemas, services, types, queries, and application functions belong under `src/modules/[module-name]/`. See [architecture](architecture.md) for public exports and allowed imports.
 - Generic reusable UI belongs in `src/components/ui/`, grouped by category (`actions`, `forms`, `layout`, `navigation`, `overlays`, `data-display`, `feedback`, `media`, `calendar`, `charts`, and `utilities`). Use the existing category barrel exports when appropriate.
 - Put rendering and accessible HTML in components. Keep form state and submit orchestration in feature hooks. Keep HTTP details in service adapters. Keep application orchestration in small functions under `actions/` or `queries/`.
-- `src/auth/actions/*` are ordinary async TypeScript use-case functions, not Next.js Server Actions; none of those files declares a `"use server"` boundary.
+- `src/modules/auth/actions/*` are ordinary async TypeScript use-case functions, not Next.js Server Actions; none of those files declares a `"use server"` boundary.
 
 ## Forms
 
 The auth forms provide the current pattern:
 
-1. Define a Zod schema under `src/auth/schemas/`.
+1. Define a Zod schema under `src/modules/auth/schemas/`.
 2. Use `react-hook-form` with `zodResolver` in the feature hook.
 3. Return submit state, input registration props, and field/form errors from the hook.
 4. Pass those values to the presentational form component; render errors next to the relevant field and use `role="alert"` for server-level form errors.
@@ -20,9 +20,9 @@ The auth forms provide the current pattern:
 
 Current auth schemas validate required trimmed name/email and an eight-character minimum password for registration; sign-in requires email and password. Do not assume these constraints are valid for a new feature without checking its API contract.
 
-The dashboard header sections live under `src/dashboard/components/` and receive mock records from `src/dashboard/data/dashboard-mock-data.ts`. They do not fetch the current session or use feature hooks. The user dropdown's sign-out button submits a form to the dashboard Server Action; this keeps display data static while preserving Auth.js sign-out behavior.
+Dashboard UI lives in `src/modules/dashboard/`; its header and home page containers receive mock records from the dashboard module and a sign-out Server Action from `src/app/actions/`. The header does not fetch the current session or use feature hooks. The user dropdown's sign-out button submits the injected action, keeping display data static while preserving Auth.js sign-out behavior. Keep a container under `src/modules/[module-name]/containers/` if it composes only that module; use `src/containers/` for cross-module composition.
 
-The projects list lives under `src/projects/`. Its query factory maps the project service's `ApiResponse` to the shared `Result`; `useProjectList(initialValue)` uses that query as its SWR fetcher and supplies the initial list as `fallbackData`. The browser service calls the same-origin `/api/bff/projects` route, which reads the backend bearer token from the encrypted Auth.js cookie before forwarding the request to `GET /projects`.
+The projects list lives under `src/modules/projects/`. Its query factory maps the project service's `ApiResponse` to the shared `Result`; `useProjectList(initialValue)` uses that query as its SWR fetcher and supplies the initial list as `fallbackData`. The browser service calls the same-origin `/api/bff/projects` route, which reads the backend bearer token from the encrypted Auth.js cookie before forwarding the request to `GET /projects`. The projects page composition lives in `src/containers/projects-page/` because it combines dashboard and projects modules. Outside consumers must use public module or subfolder barrels rather than deep imports.
 
 ## Shared component conventions
 

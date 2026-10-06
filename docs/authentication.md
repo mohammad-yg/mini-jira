@@ -6,14 +6,14 @@
 - Auth.js route exposure: `src/app/api/auth/[...nextauth]/route.ts`
 - Page redirect gate: `src/proxy.ts`
 - Browser auth BFF: `src/app/api/bff/auth/[...authPath]/route.ts`
-- Form hooks and schemas: `src/auth/hooks/` and `src/auth/schemas/`
-- Backend request adapters: `src/auth/services/`
+- Form hooks and schemas: `src/modules/auth/hooks/` and `src/modules/auth/schemas/`
+- Backend request adapters: `src/modules/auth/services/`
 
 ## Sign-in flow
 
 1. `/auth/sign-in` renders `AuthLogin` and `useAuthLoginForm`.
 2. The hook validates with React Hook Form and the Zod schema, then calls `signIn("credentials", { redirect: false })` from Auth.js.
-3. `src/auth.ts` validates the credential values and creates the `authLogin` use-case with an injected login request; the returned action receives only the credentials.
+3. `src/auth.ts` validates the credential values and creates the `authLogin` use-case with an injected login request imported from the auth module's public API; the returned action receives only the credentials.
 4. The request adapter calls `POST auth/login` through the shared API client, whose default base URL is `NEXT_PUBLIC_API_URL` or `http://localhost:4000/api/v1`.
 5. Auth.js uses the JWT session strategy and carries backend access/refresh tokens in its session token. The JWT callback refreshes the backend tokens when the access token is within 60 seconds of expiry.
 6. On success the client navigates to `/` and refreshes the route.
@@ -50,7 +50,7 @@ Treat Proxy as a page-level redirect gate, not the security boundary for backend
 - Auth.js `events.signOut` in `src/auth.ts` calls the backend logout request when a backend access token is present.
 - The BFF also has a `POST /api/bff/auth/logout` implementation; verify callers before changing or removing it.
 - The BFF profile route maps backend 401 to 401 and other query failures to 502.
-- `src/auth/store/auth-store.ts` is not used by the active Auth.js form/session path at present. Do not treat it as the authoritative session implementation without first checking current imports.
+- `src/modules/auth/store/auth-store.ts` is not used by the active Auth.js form/session path at present. Do not treat it as the authoritative session implementation without first checking current imports.
 
 ## Security invariants for changes
 

@@ -19,35 +19,45 @@ flowchart LR
   AppRouter --> Proxy[src/proxy.ts page gate]
 ```
 
-The diagram shows available paths, not a single request path. Sign-in goes through Auth.js and calls the backend from `src/auth.ts`; sign-up calls the same-origin BFF before signing in. See [authentication](authentication.md) for the exact flows.
+The diagram shows available paths, not a single request path. Sign-in goes through Auth.js and calls the backend from `src/auth.ts`; sign-up calls the same-origin BFF before signing in. Feature code lives in `src/modules/`; see the module rules below and [authentication](authentication.md) for the exact flows.
 
 ## Source map
 
-| Path                                          | Responsibility                                                                                                                                           |
-| --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/app/`                                    | App Router pages, layouts, route handlers, global styles, and local fonts                                                                                |
-| `src/dashboard/`                              | Static dashboard mock data, dashboard header sections, and a sign-out Server Action                                                                      |
-| `src/projects/`                               | Project list types, backend service adapter, query use-case, SWR hook, and project list UI                                                               |
-| `src/app/auth/`                               | Sign-in and sign-up route entry points                                                                                                                   |
-| `src/app/api/auth/[...nextauth]/route.ts`     | Exposes Auth.js handlers                                                                                                                                 |
-| `src/app/api/bff/auth/[...authPath]/route.ts` | Same-origin auth endpoints; this catch-all only allows auth operations                                                                                   |
-| `src/app/api/bff/projects/route.ts`           | Authenticated same-origin proxy for the project list                                                                                                     |
-| `src/auth.ts`                                 | Auth.js credentials provider, JWT/session callbacks, backend refresh and sign-out behavior                                                               |
-| `src/auth/components/`                        | Auth-specific presentational form and branding components                                                                                                |
-| `src/auth/containers/`                        | Composes auth layout, feature form hook, and presentational form                                                                                         |
-| `src/auth/hooks/`                             | Client form state, validation wiring, submit orchestration, and navigation                                                                               |
-| `src/auth/schemas/`                           | Zod schemas for auth form input                                                                                                                          |
-| `src/auth/actions/`                           | Use-case factories that capture injected request functions and return actions typed only by their input and output; these are not Next.js Server Actions |
-| `src/auth/services/`                          | Backend request adapters built on the shared `ApiClient`                                                                                                 |
-| `src/auth/queries/`                           | Current-profile query mapping from `ApiResponse` to `Result`                                                                                             |
-| `src/auth/store/`                             | A standalone auth store factory; no other `src` module currently imports it, so Auth.js is the active session authority                                  |
-| `src/shared/services/`                        | Generic HTTP client and `ApiResponse` contract                                                                                                           |
-| `src/shared/result/`                          | Discriminated `Result` contract and constructors                                                                                                         |
-| `src/components/ui/`                          | Reusable UI primitives, grouped by component category; most components have a colocated Storybook story                                                  |
-| `src/lib/`                                    | Small shared utilities and canonical route paths                                                                                                         |
-| `mock-server/src/cases/`                      | Typed route inventories grouped by auth, users, and projects                                                                                             |
-| `mock-server/src/index.ts`                    | Fastify server, API route registration, auth hook, and mock behavior                                                                                     |
-| `mock-server/src/types.ts`                    | Mock-server record and output types                                                                                                                      |
+| Path                                                       | Responsibility                                                                                                                  |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `src/app/`                                                 | Next.js App Router entry points, layouts, route handlers, global styles, and local fonts; keep pages thin                       |
+| `src/app/actions/`                                         | Next.js Server Action adapters at the app integration boundary                                                                  |
+| `src/modules/[module-name]/`                               | Feature modules; each owns its components, containers, hooks, schemas, types, use cases, queries, services, and feature data    |
+| `src/modules/auth/`                                        | Auth UI and hooks, auth use cases and queries, schemas, types, request adapters, and public exports                             |
+| `src/modules/projects/`                                    | Project list UI, hook, query, service, types, and public exports                                                                |
+| `src/modules/dashboard/`                                   | Dashboard-owned display data and UI; its containers compose only dashboard features                                             |
+| `src/modules/[module-name]/index.ts`                       | Public module API for symbols intended for use by other modules or app composition                                              |
+| `src/modules/[module-name]/*/index.ts`                     | Public API of a module subfolder; external consumers use barrels instead of implementation paths                                |
+| `src/components/`, `src/hooks/`, `src/lib/`, `src/shared/` | Cross-module UI, hooks, utilities, and generic contracts/services                                                               |
+| `src/app/auth/`                                            | Sign-in and sign-up route entry points                                                                                          |
+| `src/app/api/auth/[...nextauth]/route.ts`                  | Exposes Auth.js handlers                                                                                                        |
+| `src/app/api/bff/auth/[...authPath]/route.ts`              | Same-origin auth endpoints; this catch-all only allows auth operations                                                          |
+| `src/app/api/bff/projects/route.ts`                        | Authenticated same-origin proxy for the project list                                                                            |
+| `src/auth.ts`                                              | Auth.js credentials provider, JWT/session callbacks, backend refresh and sign-out behavior; imports auth through its public API |
+| `src/containers/projects-page/`                            | Projects route composition across the dashboard and projects modules                                                            |
+| `src/containers/`                                          | Multi-module page or section composition; feature-local composition stays inside its module                                     |
+| `src/shared/services/`                                     | Generic HTTP client and `ApiResponse` contract                                                                                  |
+| `src/shared/result/`                                       | Discriminated `Result` contract and constructors                                                                                |
+| `src/components/ui/`                                       | Reusable UI primitives, grouped by component category; most components have a colocated Storybook story                         |
+| `src/lib/`                                                 | Small shared utilities and canonical route paths                                                                                |
+| `mock-server/src/cases/`                                   | Typed route inventories grouped by auth, users, and projects                                                                    |
+| `mock-server/src/index.ts`                                 | Fastify server, API route registration, auth hook, and mock behavior                                                            |
+| `mock-server/src/types.ts`                                 | Mock-server record and output types                                                                                             |
+
+## Module boundaries and imports
+
+- Put feature-owned UI, custom hooks, use cases/actions, queries, services, schemas, types, data, and single-module containers under `src/modules/[module-name]/`.
+- Keep generic or cross-module code under shared root areas such as `src/components/`, `src/hooks/`, `src/lib/`, and `src/shared/`. Keep Next.js route entry points under `src/app/`.
+- A module may import its own implementation directly. Code outside a module must import only through its `src/modules/[module-name]/index.ts` or the appropriate subfolder `index.ts`; do not reach into another module's implementation files.
+- Export every cross-boundary symbol from its owning subfolder barrel and the module root barrel. Keep implementation-only symbols private.
+- Modules may depend on shared code and another module's public API. Keep the module dependency graph acyclic; move genuinely common contracts or logic to `src/shared/` instead of adding peer-to-peer implementation imports.
+- Put a container under `src/modules/[module-name]/containers/` when it composes only that module. Put it under `src/containers/` when it composes two or more modules. Route pages stay under `src/app/` and should delegate substantial composition to a suitable container.
+- Use consistent folder naming, including `hooks/` (plural) and the established `components/`, `containers/`, `actions/`, `queries/`, `services/`, `schemas/`, and `types/` folders.
 
 ## Feature request path
 
