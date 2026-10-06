@@ -1,15 +1,4 @@
-import { AuthLoginRequest } from "../types/auth-requests-types";
-import { AuthCredentials } from "../types/auth-types";
+import type { AuthLoginFactory } from "../types/auth-action-types";
 
-type Dependencies = {
-  loginRequest: AuthLoginRequest;
-};
-
-export const authLogin = async (
-  credentials: AuthCredentials,
-  deps: Dependencies,
-) => {
-  const { loginRequest } = deps;
-
-  return loginRequest(credentials);
-};
+export const createAuthLogin: AuthLoginFactory = ({ loginRequest }) =>
+  async (credentials) => loginRequest(credentials);

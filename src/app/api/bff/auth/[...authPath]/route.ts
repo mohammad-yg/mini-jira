@@ -1,8 +1,8 @@
 import { getToken } from "next-auth/jwt";
 import type { NextRequest } from "next/server";
 import { apiClient } from "@/shared/services/api-client";
-import { authLogout } from "@/auth/actions/auth-logout";
-import { authRegister } from "@/auth/actions/auth-register";
+import { createAuthLogout } from "@/auth/actions/auth-logout";
+import { createAuthRegister } from "@/auth/actions/auth-register";
 import { createAuthGetCurrentUserProfile } from "@/auth/queries/get-current-profile";
 import { createAuthGetUserProfileRequest } from "@/auth/services/auth-profile-request";
 import { createAuthLogoutRequest } from "@/auth/services/auth-logout-request";
@@ -87,10 +87,14 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
       return errorResponse("Name, email, and password are required", 400);
     }
 
-    const response = await authRegister(
-      { name: dto.name, email: dto.email, password: dto.password },
-      { registerRequest: createAuthRegisterRequest({ apiClient }) },
-    );
+    const register = createAuthRegister({
+      registerRequest: createAuthRegisterRequest({ apiClient }),
+    });
+    const response = await register({
+      name: dto.name,
+      email: dto.email,
+      password: dto.password,
+    });
     if (!response.ok || !response.data) {
       return errorResponse(
         response.error?.message ?? "Could not register the account",
@@ -111,9 +115,10 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     if (typeof accessToken !== "string")
       return errorResponse("Unauthorized", 401);
 
-    const response = await authLogout({
+    const logout = createAuthLogout({
       logoutRequest: createAuthLogoutRequest({ apiClient, accessToken }),
     });
+    const response = await logout();
     if (!response.ok) {
       return errorResponse(
         response.error?.message ?? "Could not log out",

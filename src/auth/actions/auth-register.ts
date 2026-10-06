@@ -1,15 +1,4 @@
-import { AuthRegisterRequest } from "../types/auth-requests-types";
-import { AuthRegisterDto } from "../types/auth-types";
+import type { AuthRegisterFactory } from "../types/auth-action-types";
 
-type Dependencies = {
-  registerRequest: AuthRegisterRequest;
-};
-
-export const authRegister = async (
-  dto: AuthRegisterDto,
-  deps: Dependencies,
-) => {
-  const { registerRequest } = deps;
-
-  return registerRequest(dto);
-};
+export const createAuthRegister: AuthRegisterFactory = ({ registerRequest }) =>
+  async (dto) => registerRequest(dto);

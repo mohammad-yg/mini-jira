@@ -1,9 +1,4 @@
-import type { AuthLogoutRequest } from "../types/auth-requests-types";
+import type { AuthLogoutFactory } from "../types/auth-action-types";
 
-type Dependencies = {
-  logoutRequest: AuthLogoutRequest;
-};
-
-export const authLogout = async (deps: Dependencies) => {
-  return deps.logoutRequest();
-};
+export const createAuthLogout: AuthLogoutFactory = ({ logoutRequest }) =>
+  async () => logoutRequest();

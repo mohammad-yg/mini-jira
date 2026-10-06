@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { apiClient } from "@/shared/services/api-client";
-import { authLogin } from "@/auth/actions/auth-login";
+import { createAuthLogin } from "@/auth/actions/auth-login";
 import { createAuthLoginRequest } from "@/auth/services/auth-login-request";
 import { createAuthLogoutRequest } from "@/auth/services/auth-logout-request";
 import { createAuthRefreshRequest } from "@/auth/services/auth-refresh-request";
@@ -21,6 +21,10 @@ const accessTokenExpiresAt = (accessToken: string): number => {
   }
 };
 
+const login = createAuthLogin({
+  loginRequest: createAuthLoginRequest({ apiClient }),
+});
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET,
   session: { strategy: "jwt" },
@@ -37,10 +41,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           typeof credentials.password === "string" ? credentials.password : "";
         if (!email || !password) return null;
 
-        const response = await authLogin(
-          { email, password },
-          { loginRequest: createAuthLoginRequest({ apiClient }) },
-        );
+        const response = await login({ email, password });
         if (!response.ok || !response.data?.user) return null;
 
         const user = response.data.user;

@@ -30,7 +30,7 @@ The diagram shows available paths, not a single request path. Sign-in goes throu
 | `src/auth/containers/`                        | Composes auth layout, feature form hook, and presentational form                                                        |
 | `src/auth/hooks/`                             | Client form state, validation wiring, submit orchestration, and navigation                                              |
 | `src/auth/schemas/`                           | Zod schemas for auth form input                                                                                         |
-| `src/auth/actions/`                           | Small application/use-case functions that call injected request functions; these are not Next.js Server Actions         |
+| `src/auth/actions/`                           | Use-case factories that capture injected request functions and return actions typed only by their input and output; these are not Next.js Server Actions |
 | `src/auth/services/`                          | Backend request adapters built on the shared `ApiClient`                                                                |
 | `src/auth/queries/`                           | Current-profile query mapping from `ApiResponse` to `Result`                                                            |
 | `src/auth/store/`                             | A standalone auth store factory; no other `src` module currently imports it, so Auth.js is the active session authority |
@@ -54,7 +54,7 @@ flowchart TD
   Client --> Backend[Backend or same-origin BFF]
 ```
 
-Use this as a boundary guide, not a requirement to add a layer to every small component. Keep UI rendering free of URL construction and raw `fetch` details. Keep request construction in services and pass dependencies into use-case functions so they remain easy to reason about.
+Use this as a boundary guide, not a requirement to add a layer to every small component. Keep UI rendering free of URL construction and raw `fetch` details. Keep request construction in services; use-case factories capture those dependencies and return actions whose types describe only their inputs and outputs.
 
 ## Result contracts
 
