@@ -22,6 +22,8 @@ Current auth schemas validate required trimmed name/email and an eight-character
 
 The dashboard header sections live under `src/dashboard/components/` and receive mock records from `src/dashboard/data/dashboard-mock-data.ts`. They do not fetch the current session or use feature hooks. The user dropdown's sign-out button submits a form to the dashboard Server Action; this keeps display data static while preserving Auth.js sign-out behavior.
 
+The projects list lives under `src/projects/`. Its query factory maps the project service's `ApiResponse` to the shared `Result`; `useProjectList(initialValue)` uses that query as its SWR fetcher and supplies the initial list as `fallbackData`. The browser service calls the same-origin `/api/bff/projects` route, which reads the backend bearer token from the encrypted Auth.js cookie before forwarding the request to `GET /projects`.
+
 ## Shared component conventions
 
 - Add a Storybook story beside reusable UI components using the existing `*.stories.tsx` naming pattern.

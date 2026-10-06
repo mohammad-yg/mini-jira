@@ -9,7 +9,7 @@
 - parses JSON responses, preserves non-JSON text, and treats 204/205 as no content;
 - uses `cache: "no-store"` and converts HTTP/network failures into `ApiResponse` instead of throwing them to callers.
 
-The shared client defaults to `NEXT_PUBLIC_API_URL` or `http://localhost:4000/api/v1`. The auth BFF client is created with the relative base `"/api/bff"`, so `auth/register` becomes a same-origin BFF request.
+The shared client defaults to `NEXT_PUBLIC_API_URL` or `http://localhost:4000/api/v1`. Auth and project BFF clients use the relative base `"/api/bff"`, so `auth/register` and `projects` become same-origin BFF requests.
 
 The generic HTTP types live in `src/shared/services/`. Feature request/response types belong in the feature module. Keep `ApiResponse` as the transport contract and map it to `Result` only where an application-level outcome is needed.
 
@@ -44,4 +44,4 @@ The Fastify request hook requires a bearer access token for API requests other t
 6. Add behavior-focused tests for the contract. The current every-route smoke test does not prove correctness.
 7. Update this guide if route scope, auth behavior, response shape, storage behavior, or API verification changes.
 
-Do not route unrelated product API calls through `/api/bff/auth/*`. The current BFF surface is deliberately auth-scoped.
+The frontend project-list service calls `/api/bff/projects`. That Route Handler reads the backend access token from the encrypted Auth.js cookie and forwards `GET /projects` with a bearer token. Keep product BFF routes in their own feature path; do not route project requests through `/api/bff/auth/*`.

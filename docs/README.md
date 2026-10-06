@@ -22,9 +22,9 @@ This directory describes the implemented project as it exists in source. Read th
 
 ## Current implementation snapshot
 
-- The app uses the Next.js App Router. Its dashboard header and projects list use static mock data; sign-in and sign-up are the only backend-connected product flows.
+- The app uses the Next.js App Router. The dashboard header uses static mock data; the projects list starts from its supplied SWR fallback (currently empty) and revalidates through an authenticated projects BFF. Sign-in and sign-up are the other backend-connected product flows.
 - `src/auth.ts` configures Auth.js credentials and the backend token lifecycle. `src/proxy.ts` performs page-level redirects; it does not protect API routes.
-- The Next.js BFF currently exposes only auth routes under `/api/bff/auth/*`.
+- The Next.js BFF exposes auth routes under `/api/bff/auth/*` and the authenticated project-list route at `/api/bff/projects`.
 - `mock-server` advertises a larger project-management REST API. Its API surface is not a roadmap guarantee and does not mean equivalent UI features exist.
 - The frontend uses `ApiResponse` for HTTP results and `Result` for use-case/query results. Keep these contracts distinct.
 - The root package provides lint and format scripts but no root `test` or `typecheck` script. The mock server has its own test and typecheck scripts.

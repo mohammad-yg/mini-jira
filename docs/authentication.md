@@ -13,7 +13,7 @@
 
 1. `/auth/sign-in` renders `AuthLogin` and `useAuthLoginForm`.
 2. The hook validates with React Hook Form and the Zod schema, then calls `signIn("credentials", { redirect: false })` from Auth.js.
-3. `src/auth.ts` validates the credential values and runs the `authLogin` use-case with an injected login request.
+3. `src/auth.ts` validates the credential values and creates the `authLogin` use-case with an injected login request; the returned action receives only the credentials.
 4. The request adapter calls `POST auth/login` through the shared API client, whose default base URL is `NEXT_PUBLIC_API_URL` or `http://localhost:4000/api/v1`.
 5. Auth.js uses the JWT session strategy and carries backend access/refresh tokens in its session token. The JWT callback refreshes the backend tokens when the access token is within 60 seconds of expiry.
 6. On success the client navigates to `/` and refreshes the route.
@@ -22,7 +22,7 @@
 
 1. `/auth/sign-up` renders `AuthRegister` and `useAuthRegisterForm`.
 2. The hook validates the name, email, and password with the Zod schema.
-3. It runs `authRegister` using the auth BFF client. The browser sends `POST /api/bff/auth/register` on the app's own origin.
+3. It creates the `authRegister` use-case with the auth BFF request and runs the returned action with the registration data. The browser sends `POST /api/bff/auth/register` on the app's own origin.
 4. The BFF requires an `Origin` header matching the request origin, validates that the three values are strings, then calls backend `POST auth/register`.
 5. The BFF returns the user profile only; backend tokens stay out of the registration response. The hook then signs in through the credentials provider and navigates to `/` on success.
 
@@ -35,7 +35,7 @@
 | `/api/bff/auth/register`  | `POST`                    | Same-origin registration; returns profile only                                                  |
 | `/api/bff/auth/logout`    | `POST`                    | Same-origin request that revokes the backend session using the access token                     |
 
-The BFF is currently limited to auth paths. The page gate in `src/proxy.ts` does not authorize these API routes: its matcher excludes `/api/**`. Each route handler must authenticate and validate its own request. The BFF currently does origin checking for POST requests and session-token checks for `me` and `logout`.
+The auth catch-all is limited to auth paths; project listing uses its separate `/api/bff/projects` route. The page gate in `src/proxy.ts` does not authorize API routes: its matcher excludes `/api/**`. Each route handler must authenticate and validate its own request. The auth BFF checks origins on POST requests and checks the session token for `me` and `logout`.
 
 Only the credentials provider is configured in `src/auth.ts`. The Google and GitHub buttons are display-only buttons without sign-in handlers. The forgot-password, terms, and privacy links are placeholder anchors; no corresponding routes or flows are currently implemented.
 
