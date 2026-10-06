@@ -1,0 +1,10 @@
+# Folder structure migration audit
+
+Items below record violations found during the folder-structure review. Check an item only after its implementation has been corrected.
+
+- [x] Replace stale imports that still point to deleted `src/auth`, `src/projects`, or `src/dashboard` paths, including both cross-boundary imports and module-internal aliases.
+- [x] Add public `index.ts` exports at the root and exposed subfolders of each feature module, then route external imports through those exports.
+- [x] Give dashboard-owned display data and UI a `src/modules/dashboard/` owner; restore its moved mock data and sign-out action at appropriate module/application boundaries.
+- [x] Move dashboard-only containers out of `src/containers/` and into the dashboard module; reserve `src/containers/` for multi-module composition.
+- [x] Move the projects page's substantial composition of dashboard and projects features into a cross-module container, leaving the App Router page as a thin entry point.
+- [x] Update all app pages, route handlers, and module consumers to the new module paths and public APIs without importing another module's implementation files.
