@@ -29,6 +29,7 @@ The app runs at `http://localhost:3000`; the mock API uses `http://localhost:400
 | Format files        | `npm run format`                         |
 | Check formatting    | `npm run format:check`                   |
 | Run Storybook       | `npm run storybook`                      |
+| Run Storybook tests | `npx vitest run`                         |
 | Test mock API       | `npm --prefix mock-server test`          |
 | Type-check mock API | `npm --prefix mock-server run typecheck` |
 

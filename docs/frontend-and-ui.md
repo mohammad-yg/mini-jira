@@ -20,6 +20,8 @@ The auth forms provide the current pattern:
 
 Current auth schemas validate required trimmed name/email and an eight-character minimum password for registration; sign-in requires email and password. Do not assume these constraints are valid for a new feature without checking its API contract.
 
+The dashboard header sections live under `src/dashboard/components/` and receive mock records from `src/dashboard/data/dashboard-mock-data.ts`. They do not fetch the current session or use feature hooks. The user dropdown's sign-out button submits a form to the dashboard Server Action; this keeps display data static while preserving Auth.js sign-out behavior.
+
 ## Shared component conventions
 
 - Add a Storybook story beside reusable UI components using the existing `*.stories.tsx` naming pattern.

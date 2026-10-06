@@ -33,6 +33,7 @@ The mock API also reads `PORT` and `JWT_SECRET`; see [mock-server/README.md](../
 | `npm run storybook`       | Start Storybook on port 6006                      |
 | `npm run build-storybook` | Build static Storybook output                     |
 | `npm run mock-server`     | Start the mock server package in watch mode       |
+| `npx vitest run`          | Run configured browser-based Storybook play tests |
 
 ### Mock server
 
@@ -42,7 +43,9 @@ The mock API also reads `PORT` and `JWT_SECRET`; see [mock-server/README.md](../
 | `npm --prefix mock-server run typecheck` | Type-check mock-server TypeScript    |
 | `npm --prefix mock-server run dev`       | Run Fastify with `tsx watch`         |
 
-The root package currently defines neither `npm test` nor a root TypeScript check. `vitest.config.ts` configures browser-based Storybook story tests, but no root test command is declared in `package.json`.
+The root package currently defines neither `npm test` nor a root TypeScript check. Run the configured Storybook tests with `npx vitest run`; to run only the dashboard header stories, use `npx vitest run src/dashboard/components`.
+
+Current validation note: the dashboard header story tests pass, but the full Storybook suite has two existing failures in `src/auth/containers/AuthLogin.stories.tsx` and `AuthRegister.stories.tsx`. Both fail because their hooks call `useRouter()` without an App Router context in Storybook.
 
 ## Choosing checks
 

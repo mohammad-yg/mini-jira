@@ -21,6 +21,7 @@ The diagram shows available paths, not a single request path. Sign-in goes throu
 | Path                                          | Responsibility                                                                                                          |
 | --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | `src/app/`                                    | App Router pages, layouts, route handlers, global styles, and local fonts                                               |
+| `src/dashboard/`                              | Static dashboard mock data, dashboard header sections, and a sign-out Server Action                                     |
 | `src/app/auth/`                               | Sign-in and sign-up route entry points                                                                                  |
 | `src/app/api/auth/[...nextauth]/route.ts`     | Exposes Auth.js handlers                                                                                                |
 | `src/app/api/bff/auth/[...authPath]/route.ts` | Same-origin auth endpoints; current BFF scope is auth only                                                              |
@@ -63,4 +64,4 @@ Use this as a boundary guide, not a requirement to add a layer to every small co
 
 ## Scope and current maturity
 
-The app currently renders auth screens and a minimal home page. Project, board, issue, sprint, task, label, member, and role models are present in the mock API; matching frontend feature modules and pages are not present yet. Before implementing one, trace the needed endpoint and define the UI/use-case/service types in the feature being added rather than assuming the mock API types are already suitable for browser code.
+The app currently renders auth screens, a static dashboard header, and a mock projects list. Project switching and profile details are presentation-only mock data; sign-out uses the existing Auth.js session. Project, board, issue, sprint, task, label, member, and role models are present in the mock API; matching interactive frontend feature modules are not present yet. Before implementing one, trace the needed endpoint and define the UI/use-case/service types in the feature being added rather than assuming the mock API types are already suitable for browser code.
