@@ -1,4 +1,6 @@
 import { createApiClient } from "./api-client-core";
+import { apiClientRegistryToken } from "./registry-token";
+import { forEnvironment, registry } from "@/lib/registery";
 import type { ApiClient } from "./types";
 
 const DEFAULT_API_BASE_URL =
@@ -8,4 +10,12 @@ export const createClientApiClient = (
   apiBaseUrl = DEFAULT_API_BASE_URL,
 ): ApiClient => createApiClient(apiBaseUrl);
 
-export const clientApiClient = createClientApiClient();
+registry.provide(
+  apiClientRegistryToken,
+  forEnvironment("client")(createClientApiClient()),
+);
+
+export const clientApiClient = registry.resolve(
+  apiClientRegistryToken,
+  "client",
+);

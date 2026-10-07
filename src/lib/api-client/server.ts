@@ -2,7 +2,9 @@ import "server-only";
 
 import { getToken } from "next-auth/jwt";
 import type { NextRequest } from "next/server";
+import { forEnvironment, registry } from "@/lib/registery";
 import { createApiClient } from "./api-client-core";
+import { apiClientRegistryToken } from "./registry-token";
 import type { ApiClient } from "./types";
 
 const DEFAULT_SERVER_API_BASE_URL =
@@ -19,7 +21,15 @@ export const createServerApiClient = (
     accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
   );
 
-export const serverApiClient = createServerApiClient();
+registry.provide(
+  apiClientRegistryToken,
+  forEnvironment("server")(createServerApiClient()),
+);
+
+export const serverApiClient = registry.resolve(
+  apiClientRegistryToken,
+  "server",
+);
 
 export const createBffApiClient = async (
   request: NextRequest,

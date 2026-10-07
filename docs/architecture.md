@@ -7,14 +7,15 @@ flowchart LR
   Browser --> AppRouter[Next.js App Router]
   AppRouter --> AuthUI[Auth containers and form hooks]
   AuthUI --> AuthJS[Auth.js credentials/session]
-  AuthJS --> ApiClient[Shared ApiClient]
+  AuthJS --> Registry[Runtime-aware registry]
+  Registry --> ApiClient[Client or server ApiClient]
   AuthUI --> AuthBFF[Next.js auth BFF]
-  AuthBFF --> ApiClient
+  AuthBFF --> Registry
   ProjectUI[Projects page] --> ProjectHook[SWR project hook]
   ProjectHook --> ProjectQuery[Project list query]
   ProjectQuery --> ProjectService[Project list service]
   ProjectService --> ProjectsBFF[Next.js projects BFF]
-  ProjectsBFF --> ApiClient
+  ProjectsBFF --> Registry
   ApiClient --> MockAPI[Fastify mock API]
   AppRouter --> Proxy[src/proxy.ts page gate]
 ```

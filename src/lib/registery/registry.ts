@@ -29,7 +29,10 @@ export const createRegistry = (
   const instances = new Map<symbol, Map<RuntimeEnvironment, unknown>>();
 
   return {
-    provide(token, binding) {
+    provide<TInstance>(
+      token: RegistryToken<TInstance>,
+      binding: RegistryBinding<TInstance>,
+    ) {
       const registered = instances.get(token.key) ?? new Map();
       if (registered.has(binding.environment)) {
         throw new Error(
@@ -40,7 +43,10 @@ export const createRegistry = (
       registered.set(binding.environment, binding.instance);
       instances.set(token.key, registered);
     },
-    resolve(token, environment = runtime) {
+    resolve<TInstance>(
+      token: RegistryToken<TInstance>,
+      environment: RuntimeEnvironment = runtime,
+    ): TInstance {
       const registered = instances.get(token.key);
       if (!registered?.has(environment)) {
         throw new Error(
@@ -48,7 +54,7 @@ export const createRegistry = (
         );
       }
 
-      return registered.get(environment) as typeof token.__instanceType;
+      return registered.get(environment) as TInstance;
     },
   };
 };

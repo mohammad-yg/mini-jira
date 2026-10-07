@@ -2,7 +2,7 @@
 
 ## Frontend HTTP contract
 
-API transport code lives in `src/lib/api-client/`. The client-side entry at `client.ts` exports `clientApiClient` and `createClientApiClient(baseUrl)`; the server-side entry at `server.ts` exports `serverApiClient`, `createServerApiClient(accessToken)`, and request-bound `createBffApiClient(request)`. The shared core supports:
+API transport code lives in `src/lib/api-client/`. The client-side entry at `client.ts` exports the registry-provided `clientApiClient` and `createClientApiClient(baseUrl)`; the server-side entry at `server.ts` exports the registry-provided `serverApiClient`, `createServerApiClient(accessToken)`, and request-bound `createBffApiClient(request)`. The default instances are registered for their matching runtime in `src/lib/registery/`; factories remain available for request-bound tokens or custom base URLs. The shared core supports:
 
 - supports `GET`, `POST`, `PUT`, `PATCH`, and `DELETE`, query parameters, headers, abort signals, and optional credentials;
 - serializes defined request bodies as JSON and sets `Accept: application/json`;
