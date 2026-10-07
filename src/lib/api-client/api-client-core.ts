@@ -1,17 +1,11 @@
-import {
-  createErrorApiResponse,
-  createSuccessApiResponse,
-} from "@/shared/services/api-response-factories";
+import { createErrorApiResponse, createSuccessApiResponse } from "./factories";
 import type {
   ApiClient,
   ApiQuery,
   ApiRequestConfig,
   ApiRequestOptions,
 } from "./types";
-import type {
-  ApiResponse,
-  ApiResponseError,
-} from "@/shared/services/api-response-types";
+import type { ApiResponse, ApiResponseError } from "./api-response-types";
 
 const buildUrl = (
   path: string,

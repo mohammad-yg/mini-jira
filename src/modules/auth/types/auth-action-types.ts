@@ -9,7 +9,7 @@ import type {
   AuthRegisterDto,
   AuthRegistrationResponse,
 } from "./auth-types";
-import type { ApiResponse } from "@/shared/services/types";
+import type { ApiResponse } from "@/lib/api-client";
 
 export interface AuthLoginActionDependencies {
   loginRequest: AuthLoginRequest;

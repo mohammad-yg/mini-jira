@@ -11,7 +11,7 @@ API transport code lives in `src/lib/api-client/`. The client-side entry at `cli
 
 The browser client defaults to `NEXT_PUBLIC_API_URL` or `http://localhost:4000/api/v1`. Auth and project browser clients use the relative base `"/api/bff"`, so `auth/register` and `projects` become same-origin BFF requests. The server client defaults to `API_URL`, then `NEXT_PUBLIC_API_URL`, then `http://localhost:4000/api/v1`; prefer `API_URL` for a server-only backend address.
 
-The `ApiClient` and request option types live in `src/lib/api-client/types.ts`; `ApiResponse` and its constructors live in `src/shared/services/`. Feature request/response types belong in the feature module. Keep `ApiResponse` as the transport contract and map it to `Result` only where an application-level outcome is needed.
+The `ApiClient`, request options, `ApiResponse` contract, and response constructors live in `src/lib/api-client/` and are exposed through its public barrel. Feature request/response types belong in the feature module. Keep `ApiResponse` as the transport contract and map it to `Result` only where an application-level outcome is needed.
 
 ## Mock API inventory
 

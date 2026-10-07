@@ -1,4 +1,4 @@
-import type { ApiResponse } from "@/shared/services/api-response-types";
+import type { ApiResponse } from "@/lib/api-client";
 import { failedResult, successResult } from "@/shared/result";
 import type { Result, ResultError, ResultPromise } from "@/shared/result";
 import type { AuthGetCurrentUserProfile } from "../types/auth-query-types";

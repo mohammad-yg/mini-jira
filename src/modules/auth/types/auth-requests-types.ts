@@ -1,4 +1,4 @@
-import type { ApiResponse } from "@/shared/services/types";
+import type { ApiResponse } from "@/lib/api-client";
 import type {
   AuthCredentials,
   AuthLoginResponse,
