@@ -1,6 +1,5 @@
-import { getToken } from "next-auth/jwt";
 import type { NextRequest } from "next/server";
-import { apiClient } from "@/shared/services/api-client";
+import { createBffApiClient, serverApiClient } from "@/lib/api-client/server";
 import { createAuthLogout, createAuthRegister } from "@/modules/auth/actions";
 import { createAuthGetCurrentUserProfile } from "@/modules/auth/queries";
 import {
@@ -24,31 +23,17 @@ const isSameOrigin = (request: NextRequest): boolean => {
   return origin !== null && origin === new URL(request.url).origin;
 };
 
-const getSessionToken = async (request: NextRequest) => {
-  const secret = process.env.AUTH_SECRET;
-  if (!secret) return null;
-  // Match Auth.js's default cookie prefix, which follows the request protocol.
-  return getToken({
-    req: request,
-    secret,
-    secureCookie: request.nextUrl.protocol === "https:",
-  });
-};
-
 export async function GET(request: NextRequest, { params }: RouteContext) {
   const { authPath } = await params;
   if (authPath.join("/") !== "me")
     return errorResponse("Unsupported auth endpoint", 404);
 
-  const token = await getSessionToken(request);
-  const accessToken = token?.backendAccessToken;
-  if (typeof accessToken !== "string")
-    return errorResponse("Unauthorized", 401);
+  const { apiClient, isAuthenticated } = await createBffApiClient(request);
+  if (!isAuthenticated) return errorResponse("Unauthorized", 401);
 
   const getCurrentProfile = createAuthGetCurrentUserProfile({
     getProfileUserRequest: createAuthGetUserProfileRequest({
       apiClient,
-      accessToken,
     }),
   });
   const result = await getCurrentProfile();
@@ -89,7 +74,9 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     }
 
     const register = createAuthRegister({
-      registerRequest: createAuthRegisterRequest({ apiClient }),
+      registerRequest: createAuthRegisterRequest({
+        apiClient: serverApiClient,
+      }),
     });
     const response = await register({
       name: dto.name,
@@ -111,13 +98,11 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
   }
 
   if (action === "logout") {
-    const token = await getSessionToken(request);
-    const accessToken = token?.backendAccessToken;
-    if (typeof accessToken !== "string")
-      return errorResponse("Unauthorized", 401);
+    const { apiClient, isAuthenticated } = await createBffApiClient(request);
+    if (!isAuthenticated) return errorResponse("Unauthorized", 401);
 
     const logout = createAuthLogout({
-      logoutRequest: createAuthLogoutRequest({ apiClient, accessToken }),
+      logoutRequest: createAuthLogoutRequest({ apiClient }),
     });
     const response = await logout();
     if (!response.ok) {

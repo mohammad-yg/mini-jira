@@ -1,3 +1,3 @@
-import { createApiClient } from "@/shared/services/api-client";
+import { createClientApiClient } from "@/lib/api-client/client";
 
-export const projectsBffApiClient = createApiClient("/api/bff");
+export const projectsBffApiClient = createClientApiClient("/api/bff");

@@ -1,10 +1,10 @@
-import type { ApiResponse } from "./api-response-types";
+import type { ApiResponse } from "@/shared/services/api-response-types";
 
 export type ApiHttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 export type ApiQueryValue = string | number | boolean | null | undefined;
 
-/** Values accepted for URL query parameters. Nullish values can be omitted by the client implementation. */
+/** Values accepted for URL query parameters. Nullish values are omitted. */
 export type ApiQuery = Readonly<
   Record<string, ApiQueryValue | readonly ApiQueryValue[]>
 >;
@@ -21,7 +21,7 @@ export interface ApiRequestConfig<TBody = unknown> extends ApiRequestOptions {
   body?: TBody;
 }
 
-/** HTTP client contract. Implementations normalize transport and server errors into ApiResponse. */
+/** HTTP client contract. Implementations normalize transport failures to ApiResponse. */
 export interface ApiClient {
   request<TData = unknown, TBody = unknown>(
     url: string,

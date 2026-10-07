@@ -1,6 +1,9 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { apiClient } from "@/shared/services/api-client";
+import {
+  createServerApiClient,
+  serverApiClient,
+} from "@/lib/api-client/server";
 import { createAuthLogin } from "@/modules/auth/actions";
 import {
   createAuthLoginRequest,
@@ -24,7 +27,7 @@ const accessTokenExpiresAt = (accessToken: string): number => {
 };
 
 const login = createAuthLogin({
-  loginRequest: createAuthLoginRequest({ apiClient }),
+  loginRequest: createAuthLoginRequest({ apiClient: serverApiClient }),
 });
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -87,9 +90,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return token;
       }
 
-      const refreshed = await createAuthRefreshRequest({ apiClient })(
-        token.backendRefreshToken,
-      );
+      const refreshed = await createAuthRefreshRequest({
+        apiClient: serverApiClient,
+      })(token.backendRefreshToken);
       if (!refreshed.ok || !refreshed.data) {
         token.authError = "RefreshAccessTokenError";
         return token;
@@ -121,7 +124,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         "token" in event ? event.token?.backendAccessToken : undefined;
       if (!accessToken) return;
 
-      await createAuthLogoutRequest({ apiClient, accessToken })();
+      await createAuthLogoutRequest({
+        apiClient: createServerApiClient(accessToken),
+      })();
     },
   },
 });

@@ -1,17 +1,17 @@
 import {
   createErrorApiResponse,
   createSuccessApiResponse,
-} from "./api-response-factories";
+} from "@/shared/services/api-response-factories";
 import type {
   ApiClient,
   ApiQuery,
   ApiRequestConfig,
   ApiRequestOptions,
-} from "./api-client-types";
-import type { ApiResponse, ApiResponseError } from "./api-response-types";
-
-const DEFAULT_API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
+} from "./types";
+import type {
+  ApiResponse,
+  ApiResponseError,
+} from "@/shared/services/api-response-types";
 
 const buildUrl = (
   path: string,
@@ -97,8 +97,10 @@ const request = async <TData, TBody>(
   path: string,
   config: ApiRequestConfig<TBody>,
   apiBaseUrl: string,
+  defaultHeaders?: HeadersInit,
 ): Promise<ApiResponse<TData>> => {
-  const headers = new Headers(config.headers);
+  const headers = new Headers(defaultHeaders);
+  new Headers(config.headers).forEach((value, key) => headers.set(key, value));
   headers.set("Accept", "application/json");
 
   const hasBody = config.body !== undefined;
@@ -138,12 +140,13 @@ const request = async <TData, TBody>(
 };
 
 export const createApiClient = (
-  apiBaseUrl = DEFAULT_API_BASE_URL,
+  apiBaseUrl: string,
+  defaultHeaders?: HeadersInit,
 ): ApiClient => {
   const requestFromBase = <TData = unknown, TBody = unknown>(
     url: string,
     config: ApiRequestConfig<TBody>,
-  ) => request<TData, TBody>(url, config, apiBaseUrl);
+  ) => request<TData, TBody>(url, config, apiBaseUrl, defaultHeaders);
 
   const withMethod =
     (method: ApiRequestConfig["method"]) =>
@@ -169,5 +172,3 @@ export const createApiClient = (
       }),
   };
 };
-
-export const apiClient = createApiClient();
