@@ -1,4 +1,4 @@
-import { createRegistryToken } from "@/lib/registery";
+import { createRegistryToken } from "@/lib/registry";
 import type { ApiClient } from "./types";
 
 export const apiClientRegistryToken =

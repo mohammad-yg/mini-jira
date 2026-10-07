@@ -2,6 +2,9 @@ import type {
   Registry,
   RegistryBinding,
   RegistryDecorator,
+  RegistryInjector,
+  RegistryInjectorBinding,
+  RegistryInjectorDecorator,
   RegistryToken,
   RuntimeEnvironment,
 } from "./types";
@@ -20,15 +23,24 @@ export const forEnvironment =
     instance,
   });
 
+/** Declares the runtime where a dependency injector should run. */
+export const injectorForEnvironment =
+  (environment: RuntimeEnvironment): RegistryInjectorDecorator =>
+  (inject: RegistryInjector): RegistryInjectorBinding => ({
+    environment,
+    inject,
+  });
+
 const detectRuntimeEnvironment = (): RuntimeEnvironment =>
   typeof window === "undefined" ? "server" : "client";
 
 export const createRegistry = (
   runtime: RuntimeEnvironment = detectRuntimeEnvironment(),
+  injectors: readonly RegistryInjectorBinding[] = [],
 ): Registry => {
   const instances = new Map<symbol, Map<RuntimeEnvironment, unknown>>();
 
-  return {
+  const registry: Registry = {
     provide<TInstance>(
       token: RegistryToken<TInstance>,
       binding: RegistryBinding<TInstance>,
@@ -57,6 +69,10 @@ export const createRegistry = (
       return registered.get(environment) as TInstance;
     },
   };
-};
 
-export const registry = createRegistry();
+  for (const injector of injectors) {
+    if (injector.environment === runtime) injector.inject(registry);
+  }
+
+  return registry;
+};

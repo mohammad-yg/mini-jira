@@ -2,34 +2,14 @@ import "server-only";
 
 import { getToken } from "next-auth/jwt";
 import type { NextRequest } from "next/server";
-import { forEnvironment, registry } from "@/lib/registery";
-import { createApiClient } from "./api-client-core";
+import { serverRegistry } from "@/lib/registry/injectors/server-registry";
+import { createServerApiClient } from "./server-factory";
 import { apiClientRegistryToken } from "./registry-token";
 import type { ApiClient } from "./types";
 
-const DEFAULT_SERVER_API_BASE_URL =
-  process.env.API_URL ??
-  process.env.NEXT_PUBLIC_API_URL ??
-  "http://localhost:4000/api/v1";
+export { createServerApiClient } from "./server-factory";
 
-export const createServerApiClient = (
-  accessToken?: string,
-  apiBaseUrl = DEFAULT_SERVER_API_BASE_URL,
-): ApiClient =>
-  createApiClient(
-    apiBaseUrl,
-    accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
-  );
-
-registry.provide(
-  apiClientRegistryToken,
-  forEnvironment("server")(createServerApiClient()),
-);
-
-export const serverApiClient = registry.resolve(
-  apiClientRegistryToken,
-  "server",
-);
+export const serverApiClient = serverRegistry.resolve(apiClientRegistryToken);
 
 export const createBffApiClient = async (
   request: NextRequest,

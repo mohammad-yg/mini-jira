@@ -11,10 +11,21 @@ export interface RegistryBinding<TInstance> {
   readonly instance: TInstance;
 }
 
+export type RegistryInjector = (registry: Registry) => void;
+
+export interface RegistryInjectorBinding {
+  readonly environment: RuntimeEnvironment;
+  readonly inject: RegistryInjector;
+}
+
 /** Decorates an instance with the runtime where it may be resolved. */
 export type RegistryDecorator = <TInstance>(
   instance: TInstance,
 ) => RegistryBinding<TInstance>;
+
+export type RegistryInjectorDecorator = (
+  injector: RegistryInjector,
+) => RegistryInjectorBinding;
 
 export type Registry = {
   provide<TInstance>(
