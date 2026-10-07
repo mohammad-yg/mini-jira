@@ -42,6 +42,7 @@ The diagram shows available paths, not a single request path. Sign-in goes throu
 | `src/containers/projects-page/`                            | Projects route composition across the dashboard and projects modules                                                            |
 | `src/containers/`                                          | Multi-module page or section composition; feature-local composition stays inside its module                                     |
 | `src/lib/api-client/`                                      | Shared transport core with distinct browser and server API-client entry points                                                  |
+| `src/lib/registery/`                                       | Dependency-injection container; typed runtime decorators tag instances for client or server resolution                          |
 | `src/shared/services/`                                     | Generic `ApiResponse` contract and constructors                                                                                 |
 | `src/shared/result/`                                       | Discriminated `Result` contract and constructors                                                                                |
 | `src/components/ui/`                                       | Reusable UI primitives, grouped by component category; most components have a colocated Storybook story                         |
@@ -54,6 +55,7 @@ The diagram shows available paths, not a single request path. Sign-in goes throu
 
 - Put feature-owned UI, custom hooks, use cases/actions, queries, services, schemas, types, data, and single-module containers under `src/modules/[module-name]/`.
 - Keep generic or cross-module code under shared root areas such as `src/components/`, `src/hooks/`, `src/lib/`, and `src/shared/`. Keep Next.js route entry points under `src/app/`.
+- Use `src/lib/registery/` as the dependency-injection container for shared dependencies. Decorate each registered instance with its target runtime (`client` or `server`); resolution selects the instance for the current runtime, or accepts an explicit runtime where an integration needs it. This registry is intentionally explicit and does not generate injection code.
 - A module may import its own implementation directly. Code outside a module must import only through its `src/modules/[module-name]/index.ts` or the appropriate subfolder `index.ts`; do not reach into another module's implementation files.
 - Export every cross-boundary symbol from its owning subfolder barrel and the module root barrel. Keep implementation-only symbols private.
 - Modules may depend on shared code and another module's public API. Keep the module dependency graph acyclic; move genuinely common contracts or logic to `src/shared/` instead of adding peer-to-peer implementation imports.

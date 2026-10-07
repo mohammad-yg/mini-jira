@@ -29,6 +29,7 @@ This directory describes the implemented project as it exists in source. Read th
 - The Next.js BFF exposes auth routes under `/api/bff/auth/*` and the authenticated project-list route at `/api/bff/projects`.
 - `mock-server` advertises a larger project-management REST API. Its API surface is not a roadmap guarantee and does not mean equivalent UI features exist.
 - The frontend uses `ApiResponse` for HTTP results and `Result` for use-case/query results. Keep these contracts distinct.
+- Shared dependencies are registered in `src/lib/registery/`; bindings are tagged for client or server runtime, with resolution selecting the matching instance.
 - The root package provides lint and format scripts but no root `test` or `typecheck` script. The mock server has its own test and typecheck scripts.
 
 ## Project rules versus observations
