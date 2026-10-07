@@ -11,10 +11,11 @@ Use the Node/npm versions supported by the installed dependencies and lockfile. 
 
 The frontend environment variables are:
 
-| Variable              | Purpose                                                                          |
-| --------------------- | -------------------------------------------------------------------------------- |
-| `AUTH_SECRET`         | Auth.js session signing/encryption secret; required for BFF session-token lookup |
-| `NEXT_PUBLIC_API_URL` | Backend API base URL; defaults to `http://localhost:4000/api/v1`                 |
+| Variable              | Purpose                                                                           |
+| --------------------- | --------------------------------------------------------------------------------- |
+| `AUTH_SECRET`         | Auth.js session signing/encryption secret; required for BFF session-token lookup  |
+| `NEXT_PUBLIC_API_URL` | Backend API base URL; defaults to `http://localhost:4000/api/v1`                  |
+| `API_URL`             | Optional server-only backend API base URL; overrides the server client's fallback |
 
 The mock API also reads `PORT` and `JWT_SECRET`; see [mock-server/README.md](../mock-server/README.md). Use local development credentials only.
 

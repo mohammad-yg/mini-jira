@@ -41,7 +41,8 @@ The diagram shows available paths, not a single request path. Sign-in goes throu
 | `src/auth.ts`                                              | Auth.js credentials provider, JWT/session callbacks, backend refresh and sign-out behavior; imports auth through its public API |
 | `src/containers/projects-page/`                            | Projects route composition across the dashboard and projects modules                                                            |
 | `src/containers/`                                          | Multi-module page or section composition; feature-local composition stays inside its module                                     |
-| `src/shared/services/`                                     | Generic HTTP client and `ApiResponse` contract                                                                                  |
+| `src/lib/api-client/`                                      | Shared transport core with distinct browser and server API-client entry points                                                  |
+| `src/shared/services/`                                     | Generic `ApiResponse` contract and constructors                                                                                 |
 | `src/shared/result/`                                       | Discriminated `Result` contract and constructors                                                                                |
 | `src/components/ui/`                                       | Reusable UI primitives, grouped by component category; most components have a colocated Storybook story                         |
 | `src/lib/`                                                 | Small shared utilities and canonical route paths                                                                                |

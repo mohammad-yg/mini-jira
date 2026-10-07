@@ -2,16 +2,16 @@
 
 ## Frontend HTTP contract
 
-`src/shared/services/api-client.ts` exports a default `apiClient` and a `createApiClient(baseUrl)` factory. It:
+API transport code lives in `src/lib/api-client/`. The client-side entry at `client.ts` exports `clientApiClient` and `createClientApiClient(baseUrl)`; the server-side entry at `server.ts` exports `serverApiClient`, `createServerApiClient(accessToken)`, and request-bound `createBffApiClient(request)`. The shared core supports:
 
 - supports `GET`, `POST`, `PUT`, `PATCH`, and `DELETE`, query parameters, headers, abort signals, and optional credentials;
 - serializes defined request bodies as JSON and sets `Accept: application/json`;
 - parses JSON responses, preserves non-JSON text, and treats 204/205 as no content;
 - uses `cache: "no-store"` and converts HTTP/network failures into `ApiResponse` instead of throwing them to callers.
 
-The shared client defaults to `NEXT_PUBLIC_API_URL` or `http://localhost:4000/api/v1`. Auth and project BFF clients use the relative base `"/api/bff"`, so `auth/register` and `projects` become same-origin BFF requests.
+The browser client defaults to `NEXT_PUBLIC_API_URL` or `http://localhost:4000/api/v1`. Auth and project browser clients use the relative base `"/api/bff"`, so `auth/register` and `projects` become same-origin BFF requests. The server client defaults to `API_URL`, then `NEXT_PUBLIC_API_URL`, then `http://localhost:4000/api/v1`; prefer `API_URL` for a server-only backend address.
 
-The generic HTTP types live in `src/shared/services/`. Feature request/response types belong in the feature module. Keep `ApiResponse` as the transport contract and map it to `Result` only where an application-level outcome is needed.
+The `ApiClient` and request option types live in `src/lib/api-client/types.ts`; `ApiResponse` and its constructors live in `src/shared/services/`. Feature request/response types belong in the feature module. Keep `ApiResponse` as the transport contract and map it to `Result` only where an application-level outcome is needed.
 
 ## Mock API inventory
 
@@ -44,4 +44,4 @@ The Fastify request hook requires a bearer access token for API requests other t
 6. Add behavior-focused tests for the contract. The current every-route smoke test does not prove correctness.
 7. Update this guide if route scope, auth behavior, response shape, storage behavior, or API verification changes.
 
-The frontend project-list service calls `/api/bff/projects`. That Route Handler reads the backend access token from the encrypted Auth.js cookie and forwards `GET /projects` with a bearer token. Keep product BFF routes in their own feature path; do not route project requests through `/api/bff/auth/*`.
+The frontend project-list service calls `/api/bff/projects`. BFF Route Handlers create a request-bound server client, which reads the backend access token from the encrypted Auth.js cookie and adds its bearer header to backend calls. Routes check the client's `isAuthenticated` result; token extraction and header construction stay inside the server API client. Keep product BFF routes in their own feature path; do not route project requests through `/api/bff/auth/*`.
