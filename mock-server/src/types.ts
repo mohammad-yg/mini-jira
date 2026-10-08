@@ -111,6 +111,24 @@ export interface ApiErrorOutput {
   error: string;
 }
 
+export type ClientLogLevel = "debug" | "info" | "warn" | "error";
+
+/** JSON-safe browser log entry accepted by the logs endpoint. */
+export interface ClientLogEntry {
+  app: string;
+  level: ClientLogLevel;
+  timestamp: string;
+  values: unknown[];
+}
+
+export interface ClientLogsInput {
+  logs: ClientLogEntry[];
+}
+
+export interface ClientLogsOutput {
+  accepted: number;
+}
+
 /** Successful login and registration response body. */
 export interface AuthOutput {
   accessToken: string;
@@ -140,6 +158,7 @@ export type ApiOutputBody =
   | ApiErrorOutput
   | AuthOutput
   | RefreshOutput
+  | ClientLogsOutput
   | UserOutput
   | UserOutput[]
   | ProjectRecord

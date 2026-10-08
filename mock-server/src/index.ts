@@ -12,6 +12,7 @@ import jwt from "jsonwebtoken";
 import { randomUUID } from "node:crypto";
 import type {
   BoardRecord,
+  ClientLogEntry,
   ColumnRecord,
   CommentRecord,
   IssueRecord,
@@ -25,6 +26,7 @@ import type {
   UserRecord,
 } from "./types.js";
 import { AUTH_ROUTES } from "./cases/auth.js";
+import { LOGS_ROUTES } from "./cases/logs.js";
 import { PROJECTS_ROUTES } from "./cases/projects.js";
 import { USERS_ROUTES } from "./cases/users.js";
 
@@ -149,6 +151,7 @@ export const labels: LabelRecord[] = [
 ];
 export const API = [
   ...AUTH_ROUTES,
+  ...LOGS_ROUTES,
   ...USERS_ROUTES,
   ...PROJECTS_ROUTES,
 ] as const;
@@ -216,6 +219,34 @@ const priorityValues = ["low", "medium", "high", "urgent"];
 const issueTypeValues = ["bug", "story", "task"];
 
 const bodySchemas: Record<string, JsonSchema> = {
+  "POST /logs": body(
+    {
+      logs: {
+        type: "array",
+        minItems: 1,
+        maxItems: 100,
+        items: {
+          type: "object",
+          properties: {
+            app: textField("Application name", { maxLength: 120 }),
+            level: enumField("Client log severity", [
+              "debug",
+              "info",
+              "warn",
+              "error",
+            ]),
+            timestamp: textField("ISO 8601 time when the log was created", {
+              format: "date-time",
+            }),
+            values: { type: "array", items: {} },
+          },
+          required: ["app", "level", "timestamp", "values"],
+          additionalProperties: false,
+        },
+      },
+    },
+    ["logs"],
+  ),
   "POST /auth/register": body(
     {
       name: textField("Display name", { minLength: 2, maxLength: 80 }),
@@ -613,8 +644,9 @@ function routeSchema(method: string, path: string, description: string) {
         : path.split("/")[1].replace(/^./, (c) => c.toUpperCase()),
     ],
     security:
-      path.startsWith("/auth/") &&
-      ["register", "login", "refresh"].some((x) => path.endsWith(x))
+      path === "/logs" ||
+      (path.startsWith("/auth/") &&
+        ["register", "login", "refresh"].some((x) => path.endsWith(x)))
         ? []
         : [{ bearerAuth: [] }],
   };
@@ -645,6 +677,8 @@ const boards: BoardRecord[] = [
 ];
 const memberRoles: MemberRoleRecord[] = [];
 const activeSessions = new Set<string>();
+const clientLogs: ClientLogEntry[] = [];
+const MAX_STORED_CLIENT_LOGS = 5_000;
 const safeUser = (user: UserRecord | undefined): UserOutput | undefined => {
   if (!user) return user;
   return Object.fromEntries(
@@ -754,6 +788,7 @@ export async function buildApp(): Promise<FastifyInstance> {
       req.url.startsWith("/docs") ||
       req.url.startsWith("/documentation") ||
       [
+        "/api/v1/logs",
         "/api/v1/auth/login",
         "/api/v1/auth/register",
         "/api/v1/auth/refresh",
@@ -795,6 +830,13 @@ export async function buildApp(): Promise<FastifyInstance> {
           q = asJsonObject(req.query),
           userId = (req as AuthenticatedRequest).userId ?? "";
         const project = projectOf(p.id);
+        if (path === "/logs") {
+          const incomingLogs = input.logs as ClientLogEntry[];
+          clientLogs.push(...incomingLogs);
+          if (clientLogs.length > MAX_STORED_CLIENT_LOGS)
+            clientLogs.splice(0, clientLogs.length - MAX_STORED_CLIENT_LOGS);
+          return reply.code(202).send({ accepted: incomingLogs.length });
+        }
         if (path === "/auth/login" || path === "/auth/register") {
           let user = users.find((x) => x.email === input.email);
           if (path.endsWith("login")) {
