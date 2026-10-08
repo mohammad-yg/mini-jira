@@ -1,8 +1,7 @@
+import { ServerApiClient } from '@/lib/api-client/server';
 import 'server-only'
-
-import { ServerApiClient } from '@/lib/api-client/api-client.type'
-import { GetProjectsBff, ProjectList } from '../types/project.type'
-import { failedResult, successResult } from '@/utils/result'
+import { GetProjectsBff, ProjectList } from '../types/project.type';
+import { failedResult, successResult } from '@/utils/result';
 
 type Dependencies = {
     apiClient: ServerApiClient

@@ -1,4 +1,4 @@
-import { baseRegistry, createRegistry } from "@/lib/registry";
+import { createRegistry } from "@/lib/registry";
 import { createAuthLoginRequest } from "./services/auth-login-request";
 import { createAuthLogoutRequest } from "./services/auth-logout-request";
 import { createAuthGetUserProfileRequest } from "./services/auth-profile-request";
@@ -6,6 +6,7 @@ import { createAuthRefreshRequest } from "./services/auth-refresh-request";
 import { createAuthRegisterRequest } from "./services/auth-register-request";
 import { AuthGetUserProfileRequest, AuthLoginAction, AuthLoginRequest, AuthLogoutAction, AuthLogoutRequest, AuthRefreshRequest, AuthRegisterAction, AuthRegisterRequest } from "./types";
 import { createAuthLogin, createAuthLogout, createAuthRegister } from "./actions";
+import { baseRegistry } from "@/lib/registry/client/registry-instance.client";
 
 const baseDeps = baseRegistry.instances;
 
