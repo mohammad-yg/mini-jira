@@ -1,14 +1,9 @@
 import "server-only"
-
-import { createRegistry } from "../registry.factory"
-import { createServerApiClient } from "@/lib/api-client/server/api-client.server"
-import { baseRegistry } from "../registry-instance"
-import { Logger } from "@/lib/logger";
+import { createRegistry } from "../registry.factory";
 import { AppConfig } from "@/config";
-import { ServerApiClient } from "@/lib/api-client/api-client.type"
-import { createServerLogger } from "@/lib/logger/server/logger.server";
-
-const baseDeps = baseRegistry.instances;
+import { createServerApiClient, ServerApiClient } from "@/lib/api-client/server";
+import { Logger } from "@/lib/logger";
+import { createServerLogger } from "@/lib/logger/server";
 
 export const serverRegistry = createRegistry()
     .provide<"config", AppConfig>("config", () => ({
@@ -16,6 +11,6 @@ export const serverRegistry = createRegistry()
         apiServerBaseUrl: "http://localhost:4000/api/v1/",
         appName: ''
     }))
-    .provide<'apiClient', ServerApiClient>('apiClient', () => createServerApiClient({ apiServerBaseUrl: baseDeps.config.apiServerBaseUrl, fetcher: fetch }))
-    .provide<'logger', Logger>('logger', () => createServerLogger({ appName: baseDeps.config.appName }))
+    .provide<'apiClient', ServerApiClient>('apiClient', ({ config }) => createServerApiClient({ apiServerBaseUrl: config.apiServerBaseUrl, fetcher: fetch }))
+    .provide<'logger', Logger>('logger', ({ config }) => createServerLogger({ appName: config.appName }))
     .build();

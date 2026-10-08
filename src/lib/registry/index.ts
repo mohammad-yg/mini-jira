@@ -1,5 +1,4 @@
 export { createRegistry } from "./registry.factory";
-export { baseRegistry, type GlobalRegistry } from "./registry-instance";
 export type {
   Prettify,
   RegistryBuilder,

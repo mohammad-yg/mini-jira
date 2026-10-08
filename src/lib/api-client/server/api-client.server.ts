@@ -8,9 +8,9 @@ import type {
   ApiQuery,
   ApiRequestConfig,
   ApiRequestOptions,
-  ServerApiClient,
 } from "../api-client.type";
 import type { ApiResponse, ApiResponseError } from "../api-response.type";
+import { ServerApiClient } from "./api-client-server.type";
 
 const buildUrl = (
   path: string,

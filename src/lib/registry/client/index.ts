@@ -1,0 +1,1 @@
+export { baseRegistry, type GlobalRegistry } from './registry-instance.client'

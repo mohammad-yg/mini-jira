@@ -1,7 +1,8 @@
-import { AppConfig } from "@/config";
-import { createClientApiClient } from "../api-client";
-import { createRegistry } from "./registry.factory";
-import { createClientLogger, Logger } from "../logger";
+import type { AppConfig } from "@/config";
+import { createRegistry } from "../registry.factory";
+import type { Logger } from "@/lib/logger";
+import { createClientApiClient } from "@/lib/api-client/client";
+import { createClientLogger } from "@/lib/logger/client";
 
 export const baseRegistry = createRegistry()
   .provide<"config", AppConfig>("config", () => ({

@@ -1,8 +1,1 @@
-export type {
-  ClientLogEntry,
-  ClientLogPayload,
-  LogLevel,
-  Logger,
-  LoggerOptions,
-} from "./logger.type";
-export { createClientLogger } from "./logger";
+export type { Logger, LoggerOptions } from './logger.type'
