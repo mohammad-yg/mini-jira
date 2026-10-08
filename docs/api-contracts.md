@@ -2,7 +2,7 @@
 
 ## Frontend HTTP contract
 
-API transport code lives in `src/lib/api-client/`. `api-client-client.ts` exports `createClientApiClient({ bffApiBaseUrl, fetcher })`; `api-client-server.ts` exports the server-only `createServerApiClient({ apiServerBaseUrl, fetcher })`. The public barrel exports both factories and the shared `ApiClient` contract. The registry uses `provideForRuntime("apiClient", { client, server })` to select and execute only the matching factory during `build()`. Both factories use the shared request and response contracts and support:
+API transport code lives in `src/lib/api-client/`. `api-client-client.ts` exports `createClientApiClient({ bffApiBaseUrl, fetcher })`; `api-client-server.ts` exports the server-only `createServerApiClient({ apiServerBaseUrl, fetcher })`. The registry's global composition uses `provideForRuntime("apiClient", { client, server })` to select and eagerly execute only the matching factory during `build()`. Registry execution, dependency order, and known migration gaps are documented in [architecture](architecture.md#registry-and-dependency-injection-behavior). Both factories use the shared request and response contracts and support:
 
 - supports `GET`, `POST`, `PUT`, `PATCH`, and `DELETE`, query parameters, headers, abort signals, and optional credentials;
 - serializes defined request bodies as JSON and sets `Accept: application/json`;
@@ -18,13 +18,16 @@ The `ApiClient`, request options, `ApiResponse` contract, and response construct
 The mock server combines route tuples from these files into the exported `API` array and registers the routes in Fastify:
 
 - `mock-server/src/cases/auth.ts`: register, login, logout, refresh, current profile.
+- `mock-server/src/cases/logs.ts`: receive batches of browser log entries.
 - `mock-server/src/cases/users.ts`: list/read/update/delete users.
 - `mock-server/src/cases/projects.ts`: projects, members, roles, boards/columns, sprints, issues, tasks, comments, labels, and reorder/move actions.
 - `mock-server/src/types.ts`: records and response body shapes used by mock route inventories.
 
 The versioned API base is `/api/v1`; Swagger UI is served at `/docs`. OpenAPI operations are generated from the same route inventory. Server host/port and token secret are controlled by `PORT` and `JWT_SECRET` (defaults: port `4000` and a development-only secret in source). Do not use the default JWT secret outside local development.
 
-The Fastify request hook requires a bearer access token for API requests other than `/docs`, `/documentation`, and the auth login, register, and refresh routes. `/auth/me` and `/auth/logout` therefore require a bearer token.
+The Fastify request hook requires a bearer access token for API requests other than `/docs`, `/documentation`, `/logs`, and the auth login, register, and refresh routes. `/auth/me` and `/auth/logout` therefore require a bearer token. `POST /logs` accepts up to 100 JSON-safe entries per batch and stores the latest 5,000 in process memory; it returns `202` with the number accepted.
+
+The browser logger buffers entries without writing them to the browser console. When the page is hidden or receives `pagehide`, it sends batches through `POST /api/bff/logs` using `navigator.sendBeacon`; the BFF validates the payload and forwards it to the mock API's `POST /logs` endpoint. A batch leaves the browser queue only when `sendBeacon` reports that the browser accepted it for delivery.
 
 ## Current mock implementation limits
 

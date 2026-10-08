@@ -26,10 +26,10 @@ This directory describes the implemented project as it exists in source. Read th
 - Frontend features live under `src/modules/`; shared code stays directly under `src/`. Cross-module page and section compositions belong under `src/containers/`. See [architecture](architecture.md) for public export and dependency rules.
 - `src/auth.ts` configures Auth.js credentials and the backend token lifecycle by consuming the auth module's public API. `src/proxy.ts` performs page-level redirects; it does not protect API routes.
 - Current feature modules include `src/modules/auth/`, `src/modules/projects/`, and `src/modules/dashboard/`. Use module and subfolder `index.ts` barrels for all imports crossing a module boundary.
-- The Next.js BFF exposes auth routes under `/api/bff/auth/*` and the authenticated project-list route at `/api/bff/projects`.
+- The Next.js BFF exposes auth routes under `/api/bff/auth/*`, the authenticated project-list route at `/api/bff/projects`, and client-log ingestion at `/api/bff/logs`.
 - `mock-server` advertises a larger project-management REST API. Its API surface is not a roadmap guarantee and does not mean equivalent UI features exist.
 - The frontend uses `ApiResponse` for HTTP results and `Result` for use-case/query results. Keep these contracts distinct.
-- Shared dependencies are built in `src/lib/registry/`; runtime-specific providers select the client or server factory when the registry is built.
+- `src/lib/registry/` provides a shared built registry; each feature module owns and exports its own built registry. Runtime-specific factories are selected during `build()`. See the DI contracts and current migration gaps in [architecture](architecture.md).
 - The root package provides lint and format scripts but no root `test` or `typecheck` script. The mock server has its own test and typecheck scripts.
 
 ## Project rules versus observations

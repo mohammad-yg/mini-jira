@@ -43,11 +43,11 @@ The diagram shows available paths, not a single request path. Sign-in goes throu
 | `src/containers/projects-page/`                            | Projects route composition across the dashboard and projects modules                                                            |
 | `src/containers/`                                          | Multi-module page or section composition; feature-local composition stays inside its module                                     |
 | `src/lib/api-client/`                                      | Shared transport core, client/server API-client entry points, `ApiResponse` contract, and response constructors                 |
-| `src/lib/registry/`                                        | Dependency-injection container and composition root; runtime-specific injectors register global and module dependencies         |
-| `src/utils/result/`                                       | Discriminated `Result` contract and constructors                                                                                |
+| `src/lib/registry/`                                        | Typed registry builder, runtime selection, and global dependency composition                                                    |
+| `src/utils/result/`                                        | Discriminated `Result` contract and constructors                                                                                |
 | `src/components/ui/`                                       | Reusable UI primitives, grouped by component category; most components have a colocated Storybook story                         |
 | `src/lib/`                                                 | Small shared utilities and canonical route paths                                                                                |
-| `mock-server/src/cases/`                                   | Typed route inventories grouped by auth, users, and projects                                                                    |
+| `mock-server/src/cases/`                                   | Typed route inventories grouped by auth, logs, users, and projects                                                              |
 | `mock-server/src/index.ts`                                 | Fastify server, API route registration, auth hook, and mock behavior                                                            |
 | `mock-server/src/types.ts`                                 | Mock-server record and output types                                                                                             |
 
@@ -55,12 +55,72 @@ The diagram shows available paths, not a single request path. Sign-in goes throu
 
 - Put feature-owned UI, custom hooks, use cases/actions, queries, services, schemas, types, data, and single-module containers under `src/modules/[module-name]/`.
 - Keep generic or cross-module code under shared root areas such as `src/components/`, `src/hooks/`, `src/lib/`, and `src/shared/`. Keep Next.js route entry points under `src/app/`.
-- Use `src/lib/registry/` as the dependency-injection container and composition root. `createRegistry()` collects providers without taking a runtime argument. During `build()`, the registry detects whether it is running on the client or server; `provideForRuntime(key, { client, server })` executes only the matching factory. Each dependency or feature owns its registration beside its implementation. This registration is explicit and does not generate injection code.
+- Use `src/lib/registry/` for dependency composition. Follow the AI-first DI contracts below and check the current migration status before relying on a registry.
 - A module may import its own implementation directly. Code outside a module must import only through its `src/modules/[module-name]/index.ts` or the appropriate subfolder `index.ts`; do not reach into another module's implementation files.
 - Export every cross-boundary symbol from its owning subfolder barrel and the module root barrel. Keep implementation-only symbols private.
 - Modules may depend on shared code and another module's public API. Keep the module dependency graph acyclic; move genuinely common contracts or logic to `src/shared/` instead of adding peer-to-peer implementation imports.
 - Put a container under `src/modules/[module-name]/containers/` when it composes only that module. Put it under `src/containers/` when it composes two or more modules. Route pages stay under `src/app/` and should delegate substantial composition to a suitable container.
 - Use consistent folder naming, including `hooks/` (plural) and the established `components/`, `containers/`, `actions/`, `queries/`, `services/`, `schemas/`, and `types/` folders.
+
+## Registry and dependency-injection behavior
+
+### Terminology
+
+In project documentation and generated architecture prose, use **container** only for a React/UI composition component. A DI object is a **registry builder** before `build()` and a **built registry** after `build()`. Do not call a DI registry a container.
+
+### Contracts for generated code
+
+- The application has one central `baseRegistry` for dependencies shared across modules and a separate registry owned by each feature module. Register module-specific dependencies inside that module; register only genuinely shared dependencies in `baseRegistry`.
+- A module's built registry may be used inside that module. Other modules and React/UI composition components may use it through the owning module's public `index.ts` barrel. Keep the module dependency graph acyclic.
+- Export registries only after calling `.build()`. Export the built registry instance from the module's public barrel, not the `RegistryBuilder`.
+- Use `.get(key)` as the default way to retrieve a dependency. Do not read `.instances` directly unless there is a concrete need to pass or inspect the full dependency set.
+- Dependencies that must remain server-only for security or runtime reasons—such as secrets, private credentials, or direct database handles—must bypass the shared registry. Import and use them only from server-only code; never register them in a client/server registry provider.
+- Every `.provide` call must declare both generic types explicitly: the literal key type first and the dependency type second. The key must be the lower-camel-case form of that dependency type. Apply the same explicit typing to `.provideForRuntime` registrations.
+
+```ts
+// Inside src/modules/projects/projects-registry.ts
+export const projectsRegistry = createRegistry()
+  .provide<"projectGetListRequest", ProjectGetListRequest>(
+    "projectGetListRequest",
+    () =>
+      createProjectGetListRequest({
+        apiClient: baseRegistry.get("apiClient"),
+      }),
+  )
+  .provide<"projectGetListQuery", ProjectGetListQuery>(
+    "projectGetListQuery",
+    ({ projectGetListRequest }) =>
+      createProjectGetListQuery({
+        getProjectListRequest: projectGetListRequest,
+      }),
+  )
+  .build();
+
+// From a consumer outside the projects module, import via its public barrel.
+const getProjectListQuery = projectsRegistry.get("projectGetListQuery");
+```
+
+The names in this example follow the rule `DependencyType` → `dependencyType`, and each provider states its output type in `.provide<Key, DependencyType>()`. Adapt the example to the actual dependency contract; do not copy a dependency key or type that the feature does not define.
+
+### Builder behavior
+
+`createRegistry()` returns an immutable builder. Providers are added explicitly and in dependency order:
+
+- `provide(key, factory)` registers one implementation.
+- `provideForRuntime(key, { client, server })` registers separate factories. `build()` detects the current runtime with `typeof window === "undefined"` and executes only that runtime's factory.
+- `includeModule(factory)` registers the object returned by a module factory as a group of dependencies.
+
+`build()` eagerly executes the registered steps in order. Each factory receives a shallow, read-only snapshot of dependencies registered by earlier steps; later registrations are unavailable to it. The built registry exposes the detected `runtime`, a frozen `instances` object, and `get(key)`. The registry does not discover providers, lazily resolve dependencies, or generate injection code. Registration and dependency order are explicit. Prefer `get(key)` over direct access to `instances`.
+
+The current global composition is in `src/lib/registry/registry-instance.ts`: it builds and exports `baseRegistry` with `config`, a runtime-selected `apiClient`, and a runtime-selected `logger`. `baseRegistry` is a built registry, not a builder. Its public entry point is `src/lib/registry/index.ts`.
+
+### Current module-registry migration gaps
+
+- `src/modules/projects/projects-registry.ts` currently reads `baseRegistry.instances` directly and exports the result of `createRegistry()` without calling `build()`. It therefore bypasses the default `.get(key)` access rule and exports a builder, violating the built-registry export contract above. The source tree currently has no consumer beyond re-exporting it from the projects barrel. Update the implementation before consuming it.
+- The global `apiClient` registration currently omits explicit generic arguments on `provideForRuntime`; new registrations must follow the explicit typing rule above.
+- The auth injector/service still use an older registry-token API (`src/lib/registry/primitives`) and API-client paths that are absent from the current source tree. Treat that flow as migration residue, not as a working example of the current builder.
+
+When adding DI code, use the current `RegistryBuilder` contract and public exports that actually exist. Keep construction explicit, preserve dependency order, use explicit generic types and type-derived camelCase keys, choose runtime-specific factories only for dependencies that are safe to expose in that registry, and build a module registry before exporting it. If migration changes these boundaries, update this section and the source-map table together.
 
 ## Feature request path
 
