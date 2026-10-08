@@ -1,12 +1,8 @@
 import type { ApiResponse } from "@/lib/api-client";
 import { failedResult, successResult } from "@/utils/result";
 import type { Result, ResultError, ResultPromise } from "@/utils/result";
-import type { AuthGetCurrentUserProfile } from "../types/auth-query-types";
-import type {
-  AuthCredentials,
-  AuthTokens,
-  AuthUser,
-} from "../types/auth-types";
+import type { AuthGetCurrentUserProfile } from "../types/auth-query.type";
+import type { AuthCredentials, AuthTokens, AuthUser } from "../types/auth.type";
 
 export interface AuthStoreState {
   user: AuthUser | null;

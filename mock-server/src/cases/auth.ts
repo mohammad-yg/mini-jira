@@ -1,11 +1,11 @@
-import type { ApiRouteDefinition } from "../types.js";
+import type { ApiRouteDefinition } from "../types.type.js";
 import type {
   ApiErrorOutput,
   ApiOutput,
   AuthOutput,
   RefreshOutput,
   UserOutput,
-} from "../types.js";
+} from "../types.type.js";
 
 export type AuthCaseOutput = ApiOutput<
   AuthOutput | ApiErrorOutput | RefreshOutput | UserOutput | null

@@ -2,7 +2,7 @@
 
 ## Frontend HTTP contract
 
-API transport code lives in `src/lib/api-client/`. `api-client-client.ts` exports `createClientApiClient({ bffApiBaseUrl, fetcher })`; `api-client-server.ts` exports the server-only `createServerApiClient({ apiServerBaseUrl, fetcher })`. The registry's global composition uses `provideForRuntime("apiClient", { client, server })` to select and eagerly execute only the matching factory during `build()`. Registry execution, dependency order, and known migration gaps are documented in [architecture](architecture.md#registry-and-dependency-injection-behavior). Both factories use the shared request and response contracts and support:
+API transport code lives in `src/lib/api-client/`. `api-client.client.ts` exports `createClientApiClient({ bffApiBaseUrl, fetcher })`; `api-client.server.ts` exports the server-only `createServerApiClient({ apiServerBaseUrl, fetcher })`. The registry's global composition uses `provideForRuntime("apiClient", { client, server })` to select and eagerly execute only the matching factory during `build()`. Registry execution, dependency order, and known migration gaps are documented in [architecture](architecture.md#registry-and-dependency-injection-behavior). Both factories use the shared request and response contracts and support:
 
 - supports `GET`, `POST`, `PUT`, `PATCH`, and `DELETE`, query parameters, headers, abort signals, and optional credentials;
 - serializes defined request bodies as JSON and sets `Accept: application/json`;
@@ -21,7 +21,7 @@ The mock server combines route tuples from these files into the exported `API` a
 - `mock-server/src/cases/logs.ts`: receive batches of browser log entries.
 - `mock-server/src/cases/users.ts`: list/read/update/delete users.
 - `mock-server/src/cases/projects.ts`: projects, members, roles, boards/columns, sprints, issues, tasks, comments, labels, and reorder/move actions.
-- `mock-server/src/types.ts`: records and response body shapes used by mock route inventories.
+- `mock-server/src/types.type.ts`: records and response body shapes used by mock route inventories.
 
 The versioned API base is `/api/v1`; Swagger UI is served at `/docs`. OpenAPI operations are generated from the same route inventory. Server host/port and token secret are controlled by `PORT` and `JWT_SECRET` (defaults: port `4000` and a development-only secret in source). Do not use the default JWT secret outside local development.
 
@@ -40,11 +40,11 @@ The browser logger buffers entries without writing them to the browser console. 
 ## Adding or changing an endpoint
 
 1. Confirm the task requires a backend/mock endpoint and identify its route family.
-2. Update the relevant typed record/output declarations in `mock-server/src/types.ts`.
+2. Update the relevant typed record/output declarations in `mock-server/src/types.type.ts`.
 3. Add the method/path/description tuple to the matching `mock-server/src/cases/*.ts` file so the `API` list and OpenAPI inventory stay in sync.
 4. Implement and authorize the behavior in `mock-server/src/index.ts`; do not rely on the frontend page gate for API security.
 5. Update frontend feature request/response types and service adapter if the app consumes the route.
 6. Add behavior-focused tests for the contract. The current every-route smoke test does not prove correctness.
 7. Update this guide if route scope, auth behavior, response shape, storage behavior, or API verification changes.
 
-The project BFF Route Handler still imports `createBffApiClient` from the removed `@/lib/api-client/server` entry. That consumer has not yet been migrated to the split server factory, so its request-bound authentication flow is currently a known gap. Keep product BFF routes in their own feature path; do not route project requests through `/api/bff/auth/*`.
+The project BFF Route Handler still imports `createBffApiClient` from `@/lib/api-client/api-client.server`. That helper is not part of the split server factory yet, so its request-bound authentication flow remains a known migration gap. Keep product BFF routes in their own feature path; do not route project requests through `/api/bff/auth/*`.

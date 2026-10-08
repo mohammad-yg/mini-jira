@@ -1,5 +1,9 @@
-import type { ApiRouteDefinition } from "../types.js";
-import type { ApiErrorOutput, ApiOutput, ClientLogsOutput } from "../types.js";
+import type { ApiRouteDefinition } from "../types.type.js";
+import type {
+  ApiErrorOutput,
+  ApiOutput,
+  ClientLogsOutput,
+} from "../types.type.js";
 
 export type LogsCaseOutput = ApiOutput<ClientLogsOutput | ApiErrorOutput>;
 

@@ -1,6 +1,6 @@
 import { failedResult, successResult } from "@/utils/result";
-import { AuthGetCurrentUserProfile } from "../types/auth-query-types";
-import { AuthGetUserProfileRequest } from "../types/auth-requests-types";
+import { AuthGetCurrentUserProfile } from "../types/auth-query.type";
+import { AuthGetUserProfileRequest } from "../types/auth-requests.type";
 
 type Dependencies = {
   getProfileUserRequest: AuthGetUserProfileRequest;

@@ -182,7 +182,11 @@ function CarouselPrevious({
   size = "icon-sm",
   ...props
 }: React.ComponentProps<typeof Button>) {
-  const { orientation, scrollPrev, canScrollPrev } = useCarousel();
+  const {
+    orientation,
+    scrollPrev: handleScrollPrev,
+    canScrollPrev,
+  } = useCarousel();
 
   return (
     <Button
@@ -197,7 +201,7 @@ function CarouselPrevious({
         className,
       )}
       disabled={!canScrollPrev}
-      onClick={scrollPrev}
+      onClick={handleScrollPrev}
       {...props}
     >
       <ChevronLeftIcon />
@@ -212,7 +216,11 @@ function CarouselNext({
   size = "icon-sm",
   ...props
 }: React.ComponentProps<typeof Button>) {
-  const { orientation, scrollNext, canScrollNext } = useCarousel();
+  const {
+    orientation,
+    scrollNext: handleScrollNext,
+    canScrollNext,
+  } = useCarousel();
 
   return (
     <Button
@@ -227,7 +235,7 @@ function CarouselNext({
         className,
       )}
       disabled={!canScrollNext}
-      onClick={scrollNext}
+      onClick={handleScrollNext}
       {...props}
     >
       <ChevronRightIcon />

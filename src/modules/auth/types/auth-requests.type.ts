@@ -6,7 +6,7 @@ import type {
   AuthRegistrationResponse,
   AuthTokens,
   AuthUser,
-} from "./auth-types";
+} from "./auth.type";
 
 export type AuthRegisterRequest = (
   dto: AuthRegisterDto,

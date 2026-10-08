@@ -1,6 +1,6 @@
-import { dashboardSignOut } from "@/app/actions/dashboard-sign-out";
+import { handleDashboardSignOut } from "@/app/actions/dashboard-sign-out.server";
 import { DashboardHome } from "@/modules/dashboard/containers";
 
 export default function HomePage() {
-  return <DashboardHome signOutAction={dashboardSignOut} />;
+  return <DashboardHome signOutAction={handleDashboardSignOut} />;
 }

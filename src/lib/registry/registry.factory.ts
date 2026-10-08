@@ -5,7 +5,7 @@ import type {
   Prettify,
   RuntimeEnvironment,
   RuntimeImplementations,
-} from "./registry-types";
+} from "./registry.type";
 
 const createBuilder = <TInstances extends object>(
   steps: readonly RegistryStep[],
@@ -69,7 +69,7 @@ const createBuilder = <TInstances extends object>(
           return instances[key];
         },
       });
-    }
+    },
   });
 
 const detectRuntimeEnvironment = (): RuntimeEnvironment =>

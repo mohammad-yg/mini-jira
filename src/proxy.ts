@@ -1,6 +1,6 @@
-import { auth } from "@/auth";
+import { auth } from "@/auth.server";
 import { NextResponse } from "next/server";
-import paths from "./lib/paths";
+import paths from "./lib/paths.constants";
 
 export default auth((request) => {
   const pathname = request.nextUrl.pathname;

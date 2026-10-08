@@ -4,6 +4,6 @@ export type {
   LogLevel,
   Logger,
   LoggerOptions,
-} from "./logger-types";
-export { createClientLogger } from "./logger-client";
-export { createServerLogger } from "./logger-server";
+} from "./logger.type";
+export { createClientLogger } from "./logger.client";
+export { createServerLogger } from "./logger.server";

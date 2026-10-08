@@ -1,4 +1,4 @@
-import type { ApiResponse } from "./api-response-types";
+import type { ApiResponse } from "./api-response.type";
 
 export type ApiHttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 

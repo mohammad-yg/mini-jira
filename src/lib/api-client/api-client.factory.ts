@@ -1,4 +1,4 @@
-import type { ApiResponse, ApiResponseError } from "./api-response-types";
+import type { ApiResponse, ApiResponseError } from "./api-response.type";
 
 export const createApiResponse = <TData>(
   data: TData | null,

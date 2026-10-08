@@ -1,5 +1,8 @@
 import type { NextRequest } from "next/server";
-import { createBffApiClient, serverApiClient } from "@/lib/api-client/server";
+import {
+  createBffApiClient,
+  serverApiClient,
+} from "@/lib/api-client/api-client.server";
 import { createAuthLogout, createAuthRegister } from "@/modules/auth/actions";
 import { createAuthGetCurrentUserProfile } from "@/modules/auth/queries";
 import {

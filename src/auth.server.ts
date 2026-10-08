@@ -3,7 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import {
   createServerApiClient,
   serverApiClient,
-} from "@/lib/api-client/server";
+} from "@/lib/api-client/api-client.server";
 import { createAuthLogin } from "@/modules/auth/actions";
 import {
   createAuthLoginRequest,

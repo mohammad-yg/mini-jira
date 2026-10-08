@@ -1,4 +1,4 @@
-﻿import { test, before, after } from "node:test";
+import { test, before, after } from "node:test";
 import assert from "node:assert/strict";
 import jwt from "jsonwebtoken";
 import { API, buildApp } from "../src/index.js";

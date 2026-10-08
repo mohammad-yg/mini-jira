@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/data-display/Card";
 import { AuthField } from "./AuthField";
 import { AuthSocialButton } from "./AuthSocialButton";
-import paths from "@/lib/paths";
+import paths from "@/lib/paths.constants";
 
 type Props = {
   onSubmit: SubmitEventHandler<HTMLFormElement>;

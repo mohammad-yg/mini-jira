@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { createBffApiClient } from "@/lib/api-client/server";
+import { createBffApiClient } from "@/lib/api-client/api-client.server";
 import type { ProjectList } from "@/modules/projects/types";
 
 export const runtime = "nodejs";

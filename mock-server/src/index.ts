@@ -1,4 +1,4 @@
-﻿import { PGlite } from "@electric-sql/pglite";
+import { PGlite } from "@electric-sql/pglite";
 import { drizzle } from "drizzle-orm/pglite";
 import { pgTable, text, jsonb } from "drizzle-orm/pg-core";
 import Fastify, {
@@ -24,7 +24,7 @@ import type {
   TaskRecord,
   UserOutput,
   UserRecord,
-} from "./types.js";
+} from "./types.type.js";
 import { AUTH_ROUTES } from "./cases/auth.js";
 import { LOGS_ROUTES } from "./cases/logs.js";
 import { PROJECTS_ROUTES } from "./cases/projects.js";

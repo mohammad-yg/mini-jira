@@ -20,7 +20,7 @@ flowchart LR
   AppRouter --> Proxy[src/proxy.ts page gate]
 ```
 
-The diagram shows available paths, not a single request path. Sign-in goes through Auth.js and calls the backend from `src/auth.ts`; sign-up calls the same-origin BFF before signing in. Feature code lives in `src/modules/`; see the module rules below and [authentication](authentication.md) for the exact flows.
+The diagram shows available paths, not a single request path. Sign-in goes through Auth.js and calls the backend from `src/auth.server.ts`; sign-up calls the same-origin BFF before signing in. Feature code lives in `src/modules/`; see the module rules below and [authentication](authentication.md) for the exact flows.
 
 ## Source map
 
@@ -39,7 +39,7 @@ The diagram shows available paths, not a single request path. Sign-in goes throu
 | `src/app/api/auth/[...nextauth]/route.ts`                  | Exposes Auth.js handlers                                                                                                        |
 | `src/app/api/bff/auth/[...authPath]/route.ts`              | Same-origin auth endpoints; this catch-all only allows auth operations                                                          |
 | `src/app/api/bff/projects/route.ts`                        | Authenticated same-origin proxy for the project list                                                                            |
-| `src/auth.ts`                                              | Auth.js credentials provider, JWT/session callbacks, backend refresh and sign-out behavior; imports auth through its public API |
+| `src/auth.server.ts`                                       | Auth.js credentials provider, JWT/session callbacks, backend refresh and sign-out behavior; imports auth through its public API |
 | `src/containers/projects-page/`                            | Projects route composition across the dashboard and projects modules                                                            |
 | `src/containers/`                                          | Multi-module page or section composition; feature-local composition stays inside its module                                     |
 | `src/lib/api-client/`                                      | Shared transport core, client/server API-client entry points, `ApiResponse` contract, and response constructors                 |
@@ -49,7 +49,24 @@ The diagram shows available paths, not a single request path. Sign-in goes throu
 | `src/lib/`                                                 | Small shared utilities and canonical route paths                                                                                |
 | `mock-server/src/cases/`                                   | Typed route inventories grouped by auth, logs, users, and projects                                                              |
 | `mock-server/src/index.ts`                                 | Fastify server, API route registration, auth hook, and mock behavior                                                            |
-| `mock-server/src/types.ts`                                 | Mock-server record and output types                                                                                             |
+| `mock-server/src/types.type.ts`                            | Mock-server record and output types                                                                                             |
+
+## File and identifier naming (AI-first contract)
+
+Apply these rules to every new or changed project-owned file and identifier. When refactoring existing code, update every import, export, test, Storybook reference, and configuration entry that points to a renamed file.
+
+- Name React component implementation files in `PascalCase.tsx`; name their Storybook sidecars `PascalCase.stories.tsx`. Component declarations use PascalCase too.
+- Name all other project-owned files in `kebab-case`. Next.js App Router reserved entry points keep the exact filenames required by the installed Next.js version (for example `page.tsx`, `layout.tsx`, `route.ts`, and `proxy.ts`). Keep `index.ts` barrels, package-configured executable entry points (such as `mock-server/src/index.ts`), generated `next-env.d.ts`, ecosystem-mandated config filenames, and conventional root guide names (`README.md`, `AGENTS.md`, `CLAUDE.md`) unchanged. Name project-owned declarations with the matching marker, such as `auth.type.d.ts` or `vitest-shims.type.d.ts`.
+- Put one concern marker immediately before the extension: `*.type.ts` for types/interfaces, `*.schema.ts` for schemas, `*.factory.ts` only for files whose sole responsibility is defining/exporting factories and that contain no implementation, `*.server.ts` for server implementations, `*.client.ts` for client implementations, and `*.constants.ts` for files containing only constants. A file does not get the `.factory` marker just because it also exports a factory function; name it for its implementation role, such as `api-client.server.ts`.
+- Use `PascalCase` for enum names and `SCREAMING_SNAKE_CASE` for enum member names and their string values, for example `enum AuthState { SIGNED_IN = "SIGNED_IN" }`.
+- Prefix boolean variables and parameters with a predicate such as `is`, `has`, `can`, `should`, `did`, or `will` (`isLoading`, `hasSession`). Preserve names required by framework, DOM, third-party component APIs, and serialized/public wire contracts; adapt values at the boundary instead of renaming those external keys.
+- End the names of action-oriented use cases (commands that change state or cause an operation) with `Action`, for both the variable and its type: for example, `createProjectAction: CreateProjectAction`. Do not use this suffix for read-only use cases that retrieve information, such as `getProject` or `GetProjectQuery`.
+- Name functions whose purpose is handling an event or callback `handle...` (for example `handleSubmit`). Do not rename framework callback props such as `onClick` or domain operations that are not handlers.
+- Name every custom React hook `use...`, including its file as `use-kebab-case.ts`.
+
+Treat filename markers as semantic classification, not decoration: a `.server` implementation must not enter a client dependency graph, and `.client` code must not import server-only modules. A file may use only the marker matching its primary responsibility. A factory function that is part of an implementation does not change that file's primary role; use `.factory` only when the file contains factory definitions without an implementation. Split files when they combine unrelated responsibilities.
+
+Before adding a new file, identify its role and apply the matching rule. If a Next.js reserved filename or external contract conflicts with a general rule, preserve the required external name and document/adapt the boundary.
 
 ## Module boundaries and imports
 

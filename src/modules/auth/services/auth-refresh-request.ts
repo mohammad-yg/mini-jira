@@ -1,6 +1,6 @@
-import type { ApiClient } from "@/lib/api-client/types";
-import type { AuthRefreshRequest } from "../types/auth-requests-types";
-import type { AuthTokens } from "../types/auth-types";
+import type { ApiClient } from "@/lib/api-client";
+import type { AuthRefreshRequest } from "../types/auth-requests.type";
+import type { AuthTokens } from "../types/auth.type";
 
 type Dependencies = {
   apiClient: ApiClient;

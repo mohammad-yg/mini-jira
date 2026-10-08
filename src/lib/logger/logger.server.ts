@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { Logger, LoggerOptions, LogLevel } from "./logger-types";
+import type { Logger, LoggerOptions, LogLevel } from "./logger.type";
 
 const DEFAULT_APP_NAME = "Mini Jira";
 
@@ -10,13 +10,13 @@ export const createServerLogger = ({
 }: LoggerOptions = {}): Logger => {
   const write =
     (level: LogLevel) =>
-      (...values: unknown[]) =>
-        console[level]({
-          app: appName,
-          level,
-          timestamp: new Date().toISOString(),
-          values,
-        });
+    (...values: unknown[]) =>
+      console[level]({
+        app: appName,
+        level,
+        timestamp: new Date().toISOString(),
+        values,
+      });
 
   return Object.freeze({
     debug: write("debug"),

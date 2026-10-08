@@ -1,5 +1,5 @@
-import type { ApiRouteDefinition } from "../types.js";
-import type { ApiErrorOutput, ApiOutput, UserOutput } from "../types.js";
+import type { ApiRouteDefinition } from "../types.type.js";
+import type { ApiErrorOutput, ApiOutput, UserOutput } from "../types.type.js";
 
 export type UsersCaseOutput = ApiOutput<
   ApiErrorOutput | UserOutput | UserOutput[] | null

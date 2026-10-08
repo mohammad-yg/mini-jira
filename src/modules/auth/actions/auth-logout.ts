@@ -1,4 +1,4 @@
-import type { AuthLogoutFactory } from "../types/auth-action-types";
+import type { AuthLogoutFactory } from "../types/auth-action.type";
 
 export const createAuthLogout: AuthLogoutFactory =
   ({ logoutRequest }) =>

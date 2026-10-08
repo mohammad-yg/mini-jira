@@ -2,7 +2,7 @@
 
 ## Sources of truth
 
-- Auth.js setup and backend token lifecycle: `src/auth.ts`
+- Auth.js setup and backend token lifecycle: `src/auth.server.ts`
 - Auth.js route exposure: `src/app/api/auth/[...nextauth]/route.ts`
 - Page redirect gate: `src/proxy.ts`
 - Browser auth BFF: `src/app/api/bff/auth/[...authPath]/route.ts`
@@ -13,7 +13,7 @@
 
 1. `/auth/sign-in` renders `AuthLogin` and `useAuthLoginForm`.
 2. The hook validates with React Hook Form and the Zod schema, then calls `signIn("credentials", { redirect: false })` from Auth.js.
-3. `src/auth.ts` validates the credential values and creates the `authLogin` use-case with an injected login request imported from the auth module's public API; the returned action receives only the credentials.
+3. `src/auth.server.ts` validates the credential values and creates the `authLogin` use-case with an injected login request imported from the auth module's public API; the returned action receives only the credentials.
 4. The request adapter calls `POST auth/login` through the server API client, whose base URL is `API_URL`, then `NEXT_PUBLIC_API_URL`, then `http://localhost:4000/api/v1`.
 5. Auth.js uses the JWT session strategy and carries backend access/refresh tokens in its session token. The JWT callback refreshes the backend tokens when the access token is within 60 seconds of expiry.
 6. On success the client navigates to `/` and refreshes the route.
@@ -37,7 +37,7 @@
 
 The auth catch-all is limited to auth paths; project listing uses its separate `/api/bff/projects` route. The page gate in `src/proxy.ts` does not authorize API routes: its matcher excludes `/api/**`. Each route handler must authenticate and validate its own request. The auth BFF checks origins on POST requests; the server API client reads the session token and attaches its bearer token for protected backend calls.
 
-Only the credentials provider is configured in `src/auth.ts`. The Google and GitHub buttons are display-only buttons without sign-in handlers. The forgot-password, terms, and privacy links are placeholder anchors; no corresponding routes or flows are currently implemented.
+Only the credentials provider is configured in `src/auth.server.ts`. The Google and GitHub buttons are display-only buttons without sign-in handlers. The forgot-password, terms, and privacy links are placeholder anchors; no corresponding routes or flows are currently implemented.
 
 ## Page redirect behavior
 
@@ -47,10 +47,10 @@ Treat Proxy as a page-level redirect gate, not the security boundary for backend
 
 ## Sign-out and profile details
 
-- Auth.js `events.signOut` in `src/auth.ts` calls the backend logout request when a backend access token is present.
+- Auth.js `events.signOut` in `src/auth.server.ts` calls the backend logout request when a backend access token is present.
 - The BFF also has a `POST /api/bff/auth/logout` implementation; verify callers before changing or removing it.
 - The BFF profile route maps backend 401 to 401 and other query failures to 502.
-- `src/modules/auth/store/auth-store.ts` is not used by the active Auth.js form/session path at present. Do not treat it as the authoritative session implementation without first checking current imports.
+- `src/modules/auth/store/auth-store.factory.ts` is not used by the active Auth.js form/session path at present. Do not treat it as the authoritative session implementation without first checking current imports.
 
 ## Security invariants for changes
 

@@ -1,1 +1,1 @@
-export * from "./auth-form-schemas";
+export * from "./auth-form.schema";

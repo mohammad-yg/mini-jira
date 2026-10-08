@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/data-display/Card";
 import { Checkbox } from "@/components/ui/forms/Checkbox";
-import paths from "@/lib/paths";
+import paths from "@/lib/paths.constants";
 import { AuthField } from "./AuthField";
 import { AuthSocialButton } from "./AuthSocialButton";
 

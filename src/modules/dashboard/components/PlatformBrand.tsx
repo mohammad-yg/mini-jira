@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { CheckSquare2 } from "lucide-react";
-import paths from "@/lib/paths";
+import paths from "@/lib/paths.constants";
 
 export function PlatformBrand() {
   return (

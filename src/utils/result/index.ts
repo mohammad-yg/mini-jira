@@ -5,5 +5,5 @@ export type {
   ResultFailed,
   ResultPromise,
   ResultSuccess,
-} from "./result-types";
-export { successResult, failedResult } from "./result-factories";
+} from "./result.type";
+export { successResult, failedResult } from "./result.factory";

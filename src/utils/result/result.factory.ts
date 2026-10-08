@@ -1,4 +1,4 @@
-import { Result, ResultError, ResultFailed } from "./result-types";
+import { Result, ResultError, ResultFailed } from "./result.type";
 
 export const successResult = <TData, TErrorCode>(
   data: TData,

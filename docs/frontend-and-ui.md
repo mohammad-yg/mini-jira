@@ -26,6 +26,8 @@ The projects list lives under `src/modules/projects/`. Its query factory maps th
 
 ## Shared component conventions
 
+- Follow the AI-first file and identifier naming rules in [architecture](architecture.md#file-and-identifier-naming-ai-first-contract). Preserve Next.js reserved route filenames and framework callback prop names; name project-owned handlers `handle...` and boolean identifiers with predicate prefixes.
+
 - Add a Storybook story beside reusable UI components using the existing `*.stories.tsx` naming pattern.
 - Re-export category-level components through the existing `index.ts` files when that is the established pattern in the category.
 - Reuse semantic HTML, accessible labels, keyboard behavior, and existing CSS variables before introducing a one-off primitive.

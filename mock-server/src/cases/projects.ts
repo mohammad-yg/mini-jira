@@ -1,4 +1,4 @@
-import type { ApiRouteDefinition } from "../types.js";
+import type { ApiRouteDefinition } from "../types.type.js";
 import type {
   ApiErrorOutput,
   ApiOutput,
@@ -13,7 +13,7 @@ import type {
   SprintRecord,
   TaskRecord,
   UserOutput,
-} from "../types.js";
+} from "../types.type.js";
 
 export type ProjectsCaseOutput = ApiOutput<
   | ApiErrorOutput

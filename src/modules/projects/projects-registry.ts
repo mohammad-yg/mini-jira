@@ -5,7 +5,16 @@ import { createProjectGetListQuery } from "./queries";
 
 const baseDeps = baseRegistry.instances;
 
-export const projectsRegistry =
-  createRegistry()
-    .provide<'projectGetListRequest', ProjectGetListRequest>('projectGetListRequest', () => createProjectGetListRequest(baseDeps))
-    .provide<'projectGetListQuery', ProjectGetListQuery>('projectGetListQuery', (deps) => createProjectGetListQuery({ ...baseDeps, getProjectListRequest: deps.projectGetListRequest }))
+export const projectsRegistry = createRegistry()
+  .provide<"projectGetListRequest", ProjectGetListRequest>(
+    "projectGetListRequest",
+    () => createProjectGetListRequest(baseDeps),
+  )
+  .provide<"projectGetListQuery", ProjectGetListQuery>(
+    "projectGetListQuery",
+    (deps) =>
+      createProjectGetListQuery({
+        ...baseDeps,
+        getProjectListRequest: deps.projectGetListRequest,
+      }),
+  );

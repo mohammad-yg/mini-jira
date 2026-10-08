@@ -1,5 +1,5 @@
-import type { ApiClient } from "@/lib/api-client/types";
-import type { AuthLogoutRequest } from "../types/auth-requests-types";
+import type { ApiClient } from "@/lib/api-client";
+import type { AuthLogoutRequest } from "../types/auth-requests.type";
 
 type Dependencies = {
   apiClient: ApiClient;

@@ -1,7 +1,7 @@
 "use client";
 
-import type { Logger, LoggerOptions, LogLevel } from "./logger-types";
-import type { ClientLogEntry, ClientLogPayload } from "./logger-types";
+import type { Logger, LoggerOptions, LogLevel } from "./logger.type";
+import type { ClientLogEntry, ClientLogPayload } from "./logger.type";
 
 const DEFAULT_APP_NAME = "Mini Jira";
 const LOGS_BFF_ENDPOINT = "/api/bff/logs";
@@ -10,7 +10,7 @@ const MAX_BATCH_BYTES = 60 * 1024;
 const MAX_ENTRY_VALUES_BYTES = 20 * 1024;
 const MAX_VALUE_CHARACTERS = 8_000;
 const logQueue: ClientLogEntry[] = [];
-let flushListenersAttached = false;
+let areFlushListenersAttached = false;
 
 const serializeValue = (value: unknown): unknown => {
   if (value instanceof Error) {
@@ -99,26 +99,26 @@ const flushClientLogs = (): void => {
     const { entries, body } = createBeaconBatch();
     if (entries.length === 0) return;
 
-    let accepted = false;
+    let wasAccepted = false;
     try {
-      accepted = navigator.sendBeacon(LOGS_BFF_ENDPOINT, body);
+      wasAccepted = navigator.sendBeacon(LOGS_BFF_ENDPOINT, body);
     } catch {
       return;
     }
 
-    if (!accepted) return;
+    if (!wasAccepted) return;
     logQueue.splice(0, entries.length);
   }
 };
 
 const attachFlushListeners = (): void => {
-  if (flushListenersAttached || typeof window === "undefined") return;
+  if (areFlushListenersAttached || typeof window === "undefined") return;
 
   window.addEventListener("pagehide", flushClientLogs);
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") flushClientLogs();
   });
-  flushListenersAttached = true;
+  areFlushListenersAttached = true;
 };
 
 /** Creates a browser logger that buffers entries until the page is hidden. */

@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/overlays/DropdownMenu";
-import paths from "@/lib/paths";
+import paths from "@/lib/paths.constants";
 import type { DashboardProject } from "../types";
 
 type Props = {

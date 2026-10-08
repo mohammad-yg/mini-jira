@@ -4,8 +4,8 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { authLoginFormSchema } from "../schemas/auth-form-schemas";
-import type { AuthCredentials } from "../types/auth-types";
+import { authLoginFormSchema } from "../schemas/auth-form.schema";
+import type { AuthCredentials } from "../types/auth.type";
 
 export const useAuthLoginForm = () => {
   const router = useRouter();
@@ -20,7 +20,7 @@ export const useAuthLoginForm = () => {
     defaultValues: { email: "", password: "" },
   });
 
-  const onSubmit = handleSubmit(async (credentials) => {
+  const handleLoginSubmit = handleSubmit(async (credentials) => {
     try {
       const result = await signIn("credentials", {
         ...credentials,
@@ -39,7 +39,7 @@ export const useAuthLoginForm = () => {
   });
 
   return {
-    onSubmit,
+    onSubmit: handleLoginSubmit,
     emailInputProps: register("email"),
     passwordInputProps: register("password"),
     errors: {

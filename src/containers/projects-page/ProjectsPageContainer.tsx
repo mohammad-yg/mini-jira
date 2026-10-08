@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/actions/Button";
 import { DashboardHeader } from "@/modules/dashboard/containers";
 import { ProjectList as ProjectListView } from "@/modules/projects/components";
 import type { ProjectList } from "@/modules/projects/types";
-import paths from "@/lib/paths";
+import paths from "@/lib/paths.constants";
 
 type Props = {
   signOutAction: NonNullable<ComponentProps<"form">["action"]>;

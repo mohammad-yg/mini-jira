@@ -1,6 +1,6 @@
-import type { ApiClient } from "@/lib/api-client/types";
-import type { AuthLoginRequest } from "../types/auth-requests-types";
-import type { AuthCredentials, AuthLoginResponse } from "../types/auth-types";
+import type { ApiClient } from "@/lib/api-client";
+import type { AuthLoginRequest } from "../types/auth-requests.type";
+import type { AuthCredentials, AuthLoginResponse } from "../types/auth.type";
 
 type Dependencies = {
   apiClient: ApiClient;

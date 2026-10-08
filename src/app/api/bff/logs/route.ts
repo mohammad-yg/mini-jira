@@ -1,7 +1,7 @@
 import type {
   ClientLogEntry,
   ClientLogPayload,
-} from "@/lib/logger/logger-types";
+} from "@/lib/logger/logger.type";
 
 export const runtime = "nodejs";
 

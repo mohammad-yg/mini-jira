@@ -1,4 +1,4 @@
-import type { AuthRegisterFactory } from "../types/auth-action-types";
+import type { AuthRegisterFactory } from "../types/auth-action.type";
 
 export const createAuthRegister: AuthRegisterFactory =
   ({ registerRequest }) =>

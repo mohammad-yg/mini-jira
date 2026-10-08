@@ -2,13 +2,13 @@ import type {
   AuthLoginRequest,
   AuthLogoutRequest,
   AuthRegisterRequest,
-} from "./auth-requests-types";
+} from "./auth-requests.type";
 import type {
   AuthCredentials,
   AuthLoginResponse,
   AuthRegisterDto,
   AuthRegistrationResponse,
-} from "./auth-types";
+} from "./auth.type";
 import type { ApiResponse } from "@/lib/api-client";
 
 export interface AuthLoginActionDependencies {
