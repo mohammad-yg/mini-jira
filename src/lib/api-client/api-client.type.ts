@@ -51,3 +51,5 @@ export interface ApiClient {
     options?: ApiRequestOptions & { body?: TBody },
   ): Promise<ApiResponse<TData>>;
 }
+
+export type ServerApiClient = ApiClient

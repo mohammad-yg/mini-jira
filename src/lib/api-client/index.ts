@@ -1,5 +1,4 @@
-export { createClientApiClient } from "./api-client.client";
-export { createServerApiClient } from "./api-client.server";
+export { createClientApiClient } from "./api-client";
 export {
   createApiResponse,
   createErrorApiResponse,

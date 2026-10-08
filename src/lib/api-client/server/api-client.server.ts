@@ -3,14 +3,14 @@ import "server-only";
 import {
   createErrorApiResponse,
   createSuccessApiResponse,
-} from "./api-client.factory";
+} from "../api-client.factory";
 import type {
-  ApiClient,
   ApiQuery,
   ApiRequestConfig,
   ApiRequestOptions,
-} from "./api-client.type";
-import type { ApiResponse, ApiResponseError } from "./api-response.type";
+  ServerApiClient,
+} from "../api-client.type";
+import type { ApiResponse, ApiResponseError } from "../api-response.type";
 
 const buildUrl = (
   path: string,
@@ -96,51 +96,51 @@ const getResponseError = (
 
 const createRequest =
   (apiBaseUrl: string, fetcher: typeof fetch, defaultHeaders?: HeadersInit) =>
-  async <TData, TBody>(
-    path: string,
-    config: ApiRequestConfig<TBody>,
-  ): Promise<ApiResponse<TData>> => {
-    const headers = new Headers(defaultHeaders);
-    new Headers(config.headers).forEach((value, key) =>
-      headers.set(key, value),
-    );
-    headers.set("Accept", "application/json");
+    async <TData, TBody>(
+      path: string,
+      config: ApiRequestConfig<TBody>,
+    ): Promise<ApiResponse<TData>> => {
+      const headers = new Headers(defaultHeaders);
+      new Headers(config.headers).forEach((value, key) =>
+        headers.set(key, value),
+      );
+      headers.set("Accept", "application/json");
 
-    const hasBody = config.body !== undefined;
-    if (hasBody && !headers.has("Content-Type")) {
-      headers.set("Content-Type", "application/json");
-    }
-
-    try {
-      const response = await fetcher(buildUrl(path, config.query, apiBaseUrl), {
-        method: config.method,
-        headers,
-        body: hasBody ? JSON.stringify(config.body) : undefined,
-        signal: config.signal,
-        credentials: config.credentials,
-        cache: "no-store",
-      });
-      const payload = await readResponse(response);
-
-      if (!response.ok) {
-        return createErrorApiResponse<TData>(
-          getResponseError(response.status, payload),
-          response.status,
-        );
+      const hasBody = config.body !== undefined;
+      if (hasBody && !headers.has("Content-Type")) {
+        headers.set("Content-Type", "application/json");
       }
 
-      return createSuccessApiResponse(payload as TData, response.status);
-    } catch (error) {
-      return createErrorApiResponse<TData>({
-        message:
-          error instanceof Error ? error.message : "Network request failed",
-        code:
-          error instanceof DOMException && error.name === "AbortError"
-            ? "ABORTED"
-            : "NETWORK_ERROR",
-      });
-    }
-  };
+      try {
+        const response = await fetcher(buildUrl(path, config.query, apiBaseUrl), {
+          method: config.method,
+          headers,
+          body: hasBody ? JSON.stringify(config.body) : undefined,
+          signal: config.signal,
+          credentials: config.credentials,
+          cache: "no-store",
+        });
+        const payload = await readResponse(response);
+
+        if (!response.ok) {
+          return createErrorApiResponse<TData>(
+            getResponseError(response.status, payload),
+            response.status,
+          );
+        }
+
+        return createSuccessApiResponse(payload as TData, response.status);
+      } catch (error) {
+        return createErrorApiResponse<TData>({
+          message:
+            error instanceof Error ? error.message : "Network request failed",
+          code:
+            error instanceof DOMException && error.name === "AbortError"
+              ? "ABORTED"
+              : "NETWORK_ERROR",
+        });
+      }
+    };
 
 /** Builds a server API client with optional bearer token and transport dependencies. */
 export const createServerApiClient = ({
@@ -149,17 +149,17 @@ export const createServerApiClient = ({
 }: {
   apiServerBaseUrl: string;
   fetcher: typeof fetch;
-}): ApiClient => {
+}): ServerApiClient => {
   const request = createRequest(apiServerBaseUrl, fetcher);
 
   const withMethod =
     (method: ApiRequestConfig["method"]) =>
-    <TData = unknown, TBody = unknown>(
-      url: string,
-      body?: TBody,
-      options: ApiRequestOptions = {},
-    ) =>
-      request<TData, TBody>(url, { ...options, method, body });
+      <TData = unknown, TBody = unknown>(
+        url: string,
+        body?: TBody,
+        options: ApiRequestOptions = {},
+      ) =>
+        request<TData, TBody>(url, { ...options, method, body });
 
   return {
     request,

@@ -5,5 +5,4 @@ export type {
   Logger,
   LoggerOptions,
 } from "./logger.type";
-export { createClientLogger } from "./logger.client";
-export { createServerLogger } from "./logger.server";
+export { createClientLogger } from "./logger";
