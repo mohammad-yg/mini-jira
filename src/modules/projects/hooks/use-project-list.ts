@@ -1,32 +1,31 @@
 "use client";
 
 import useSWR from "swr";
-import { createProjectGetListQuery } from "../queries/get-project-list";
-import { createProjectGetListRequest } from "../services/get-project-list-request";
-import { projectsBffApiClient } from "../services/projects-bff-api-client";
-import type { ProjectList } from "../types";
+import type { ProjectGetListQuery, ProjectList } from "../types";
 
-const getProjectList = createProjectGetListQuery({
-  getProjectListRequest: createProjectGetListRequest({
-    apiClient: projectsBffApiClient,
-  }),
-});
 
-const fetchProjectList = async (): Promise<ProjectList> => {
-  const result = await getProjectList();
+type Dependencies = {
+  projectGetListQuery: ProjectGetListQuery
+}
 
-  if (!result.success) {
-    throw new Error(
-      result.error.message ?? `Could not load projects (${result.error.code})`,
-    );
+const createFetchProjectList = (deps: Dependencies): () => Promise<ProjectList> => {
+  const { projectGetListQuery } = deps;
+  return async () => {
+    const result = await projectGetListQuery();
+
+    if (!result.success) {
+      throw new Error(
+        result.error.message ?? `Could not load projects (${result.error.code})`,
+      );
+    }
+
+    return result.data;
   }
-
-  return result.data;
 };
 
 const PROJECT_LIST_KEY = "/api/bff/projects";
 
-export const useProjectList = (initialValue: ProjectList) =>
-  useSWR<ProjectList, Error>(PROJECT_LIST_KEY, fetchProjectList, {
+export const useProjectList = (initialValue: ProjectList, deps: Dependencies) =>
+  useSWR<ProjectList, Error>(PROJECT_LIST_KEY, createFetchProjectList(deps), {
     fallbackData: initialValue,
   });

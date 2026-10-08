@@ -1,4 +1,4 @@
-import type { ApiClient } from "@/lib/api-client/types";
+import { ApiClient } from "@/lib/api-client";
 import type { ProjectGetListRequest, ProjectList } from "../types";
 
 type Dependencies = {
