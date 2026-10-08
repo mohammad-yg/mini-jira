@@ -12,7 +12,7 @@ export type RuntimeImplementations<
   (dependencies: Readonly<Prettify<TDependencies>>) => TValue
 >;
 
-export interface Container<TInstances extends object> {
+export interface Registry<TInstances extends object> {
   readonly runtime: RuntimeEnvironment;
   readonly instances: Prettify<TInstances>;
   get<K extends keyof TInstances>(key: K): TInstances[K];
@@ -33,11 +33,17 @@ export interface RegistryBuilder<
    * it needs. Use `provideForRuntime` when client and server need different
    * implementations.
    *
+   * Always provide both generic arguments explicitly. The key is the
+   * lower-camel-case form of the dependency type.
+   *
    * @example
    * ```ts
    * const builder = createRegistry()
-   *   .provide("config", () => config)
-   *   .provide("apiClient", ({ config }) => createApiClient(config.apiUrl));
+   *   .provide<"config", AppConfig>("config", () => config)
+   *   .provide<"apiClient", ApiClient>(
+   *     "apiClient",
+   *     ({ config }) => createApiClient(config.apiUrl),
+   *   );
    *
    * const apiClient = builder.build().get("apiClient");
    * ```
@@ -73,5 +79,5 @@ export interface RegistryBuilder<
     moduleFactory: (dependencies: Readonly<Prettify<TInstances>>) => TModule,
   ): RegistryBuilder<TInstances & TModule>;
 
-  build(): Container<TInstances>;
+  build(): Registry<TInstances>;
 }

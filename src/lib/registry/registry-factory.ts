@@ -1,7 +1,7 @@
 import type {
   RegistryStep,
   RegistryBuilder,
-  Container,
+  Registry,
   Prettify,
   RuntimeEnvironment,
   RuntimeImplementations,
@@ -46,7 +46,7 @@ const createBuilder = <TInstances extends object>(
       return createBuilder<TInstances & TModule>([...steps, registration]);
     },
 
-    build(): Container<TInstances> {
+    build(): Registry<TInstances> {
       const runtime = detectRuntimeEnvironment();
       const resolved: Record<PropertyKey, unknown> = Object.create(null);
 
