@@ -1,3 +1,5 @@
+import { ResultPromise } from "@/utils/result";
+
 export interface Project {
   id: string;
   name: string;
@@ -6,4 +8,6 @@ export interface Project {
   imageUrl?: string;
 }
 
-export type ProjectList = Project[];
+export type ProjectList = Project;
+
+export type GetProjectsBff = () => ResultPromise<ProjectList[]>

@@ -4,7 +4,7 @@ import { expect, within } from "storybook/test";
 import type { ProjectList as ProjectListData } from "../types";
 import { ProjectList } from "./ProjectList";
 
-const initialProjects: ProjectListData = [
+const initialProjects: ProjectListData[] = [
   {
     id: "mini-jira",
     name: "Mini Jira",

@@ -8,4 +8,4 @@ type Dependencies = {
 export const createProjectGetListRequest =
   ({ apiClient }: Dependencies): ProjectGetListRequest =>
   () =>
-    apiClient.get<ProjectList>("projects");
+    apiClient.get<ProjectList[]>("projects");

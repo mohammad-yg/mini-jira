@@ -3,13 +3,16 @@
 import { ArrowUpRight, FolderKanban } from "lucide-react";
 import { useProjectList } from "../hooks/use-project-list";
 import type { ProjectList } from "../types";
+import { projectsRegistry } from "../projects-registry";
 
 type ProjectListProps = {
-  initialValue: ProjectList;
+  initialValue: ProjectList[];
 };
 
 export function ProjectList({ initialValue }: ProjectListProps) {
-  const { data, error } = useProjectList(initialValue);
+  const projectGetListQuery = projectsRegistry.get("projectGetListQuery");
+
+  const { data, error } = useProjectList(initialValue, { projectGetListQuery });
   const projects = data ?? initialValue;
 
   return (

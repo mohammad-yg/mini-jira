@@ -9,7 +9,7 @@ import paths from "@/lib/paths.constants";
 
 type Props = {
   signOutAction: NonNullable<ComponentProps<"form">["action"]>;
-  initialProjects: ProjectList;
+  initialProjects: ProjectList[];
 };
 
 export function ProjectsPageContainer({

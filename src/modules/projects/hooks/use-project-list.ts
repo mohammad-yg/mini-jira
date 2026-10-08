@@ -1,33 +1,35 @@
 "use client";
 
 import useSWR from "swr";
-import type { ProjectGetListQuery, ProjectList } from "../types";
+import type { ProjectList } from "../types";
+import { ProjectsListQuery } from "../types/project-query.type";
+import { useCallback } from "react";
 
 type Dependencies = {
-  projectGetListQuery: ProjectGetListQuery;
+  projectGetListQuery: ProjectsListQuery;
 };
 
-const createFetchProjectList = (
-  deps: Dependencies,
-): (() => Promise<ProjectList>) => {
+const PROJECT_LIST_KEY = "/api/bff/projects";
+
+export const useProjectList = (initialValue: ProjectList[], deps: Dependencies) => {
   const { projectGetListQuery } = deps;
-  return async () => {
+
+
+  const fetcher = useCallback(async () => {
     const result = await projectGetListQuery();
 
     if (!result.success) {
       throw new Error(
         result.error.message ??
-          `Could not load projects (${result.error.code})`,
+        `Could not load projects (${result.error.code})`,
       );
     }
 
     return result.data;
-  };
-};
+  },
+    [projectGetListQuery])
 
-const PROJECT_LIST_KEY = "/api/bff/projects";
-
-export const useProjectList = (initialValue: ProjectList, deps: Dependencies) =>
-  useSWR<ProjectList, Error>(PROJECT_LIST_KEY, createFetchProjectList(deps), {
+  return useSWR<ProjectList[], Error>(PROJECT_LIST_KEY, fetcher, {
     fallbackData: initialValue,
   });
+}
