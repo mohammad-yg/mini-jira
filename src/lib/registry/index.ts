@@ -1,16 +1,16 @@
+export { createRegistry } from "./registry-factory";
 export {
-  createRegistry,
-  createRegistryToken,
-  forEnvironment,
-  injectorForEnvironment,
-} from "./registry";
+  baseContainer,
+  baseRegistry,
+  registry,
+  type GlobalDeps,
+  type GlobalRegistry,
+} from "./registry-instance";
 export type {
-  Registry,
-  RegistryBinding,
-  RegistryDecorator,
-  RegistryInjector,
-  RegistryInjectorBinding,
-  RegistryInjectorDecorator,
-  RegistryToken,
+  Container,
+  ModuleInjector,
+  Prettify,
+  RegistryBuilder,
   RuntimeEnvironment,
-} from "./types";
+  RuntimeImplementations,
+} from "./registry-types";
