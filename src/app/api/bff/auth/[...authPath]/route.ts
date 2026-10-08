@@ -1,16 +1,11 @@
 import type { NextRequest } from "next/server";
-import {
-  createBffApiClient,
-  serverApiClient,
-} from "@/lib/api-client/api-client.server";
-import { createAuthLogout, createAuthRegister } from "@/modules/auth/actions";
-import { createAuthGetCurrentUserProfile } from "@/modules/auth/queries";
-import {
-  createAuthGetUserProfileRequest,
-  createAuthLogoutRequest,
-  createAuthRegisterRequest,
-} from "@/modules/auth/services";
 import type { AuthRegisterDto } from "@/modules/auth/types";
+import {
+  authServerRegistry,
+  createAuthBffRegistry,
+} from "@/modules/auth/server/auth-registry.server";
+import { serverRegistry } from "@/lib/registry/server/registry-instance.server";
+import { getAuthentication } from "@/modules/auth/server/auth-get-authentication.server";
 
 type RouteContext = {
   params: Promise<{ authPath: string[] }>;
@@ -31,14 +26,16 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
   if (authPath.join("/") !== "me")
     return errorResponse("Unsupported auth endpoint", 404);
 
-  const { apiClient, isAuthenticated } = await createBffApiClient(request);
-  if (!isAuthenticated) return errorResponse("Unauthorized", 401);
+  const apiClient = serverRegistry.get('apiClient');
+  const { isAuthenticated } = await getAuthentication();
 
-  const getCurrentProfile = createAuthGetCurrentUserProfile({
-    getProfileUserRequest: createAuthGetUserProfileRequest({
-      apiClient,
-    }),
-  });
+  if (!isAuthenticated || !apiClient)
+    return errorResponse("Unauthorized", 401);
+
+  const requestRegistry = createAuthBffRegistry(apiClient);
+  const getCurrentProfile = requestRegistry.get(
+    "authGetCurrentUserProfileQuery",
+  );
   const result = await getCurrentProfile();
   if (!result.success) {
     const status = result.error.code === "unauthorized" ? 401 : 502;
@@ -76,12 +73,8 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
       return errorResponse("Name, email, and password are required", 400);
     }
 
-    const register = createAuthRegister({
-      registerRequest: createAuthRegisterRequest({
-        apiClient: serverApiClient,
-      }),
-    });
-    const response = await register({
+    const authRegisterAction = authServerRegistry.get("authRegisterAction");
+    const response = await authRegisterAction({
       name: dto.name,
       email: dto.email,
       password: dto.password,
@@ -101,13 +94,15 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
   }
 
   if (action === "logout") {
-    const { apiClient, isAuthenticated } = await createBffApiClient(request);
-    if (!isAuthenticated) return errorResponse("Unauthorized", 401);
+    const apiClient = serverRegistry.get('apiClient');
+    const isAuthenticated = await getAuthentication();
 
-    const logout = createAuthLogout({
-      logoutRequest: createAuthLogoutRequest({ apiClient }),
-    });
-    const response = await logout();
+    if (!isAuthenticated || !apiClient)
+      return errorResponse("Unauthorized", 401);
+
+    const requestRegistry = createAuthBffRegistry(apiClient);
+    const authLogoutAction = requestRegistry.get("authLogoutAction");
+    const response = await authLogoutAction();
     if (!response.ok) {
       return errorResponse(
         response.error?.message ?? "Could not log out",

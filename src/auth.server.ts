@@ -1,16 +1,7 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import {
-  createServerApiClient,
-  serverApiClient,
-} from "@/lib/api-client/api-client.server";
-import { createAuthLogin } from "@/modules/auth/actions";
-import {
-  createAuthLoginRequest,
-  createAuthLogoutRequest,
-  createAuthRefreshRequest,
-} from "@/modules/auth/services";
 import type { AuthUser } from "@/modules/auth/types";
+import { authServerRegistry } from "./modules/auth/server/auth-registry.server";
 
 const accessTokenExpiresAt = (accessToken: string): number => {
   try {
@@ -25,10 +16,6 @@ const accessTokenExpiresAt = (accessToken: string): number => {
     return Date.now() + 55 * 60 * 1000;
   }
 };
-
-const login = createAuthLogin({
-  loginRequest: createAuthLoginRequest({ apiClient: serverApiClient }),
-});
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET,
@@ -46,7 +33,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           typeof credentials.password === "string" ? credentials.password : "";
         if (!email || !password) return null;
 
-        const response = await login({ email, password });
+        const loginAction = authServerRegistry.get("authLoginAction");
+
+        const response = await loginAction({ email, password });
         if (!response.ok || !response.data?.user) return null;
 
         const user = response.data.user;
@@ -79,20 +68,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         delete token.authError;
       }
 
+      const tokenExpiresAt = token.backendAccessTokenExpiresAt;
       if (
-        !token.backendAccessTokenExpiresAt ||
-        Date.now() < token.backendAccessTokenExpiresAt - 60_000
+        typeof tokenExpiresAt !== "number" ||
+        Date.now() < tokenExpiresAt - 60_000
       ) {
         return token;
       }
-      if (!token.backendRefreshToken) {
+      const refreshToken = token.backendRefreshToken;
+      if (typeof refreshToken !== "string" || !refreshToken) {
         token.authError = "RefreshAccessTokenError";
         return token;
       }
 
-      const refreshed = await createAuthRefreshRequest({
-        apiClient: serverApiClient,
-      })(token.backendRefreshToken);
+      const authRefreshRequest = authServerRegistry.get("authRefreshRequest");
+
+      const refreshed = await authRefreshRequest(refreshToken);
       if (!refreshed.ok || !refreshed.data) {
         token.authError = "RefreshAccessTokenError";
         return token;
@@ -124,9 +115,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         "token" in event ? event.token?.backendAccessToken : undefined;
       if (!accessToken) return;
 
-      await createAuthLogoutRequest({
-        apiClient: createServerApiClient(accessToken),
-      })();
+      const authLogoutAction = authServerRegistry.get("authLogoutAction");
+
+      await authLogoutAction();
     },
   },
 });

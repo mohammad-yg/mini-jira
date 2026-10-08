@@ -2,7 +2,6 @@ export * from "./actions";
 export * from "./components";
 export * from "./containers";
 export * from "./hooks";
-export * from "./injectors";
 export * from "./queries";
 export * from "./schemas";
 export * from "./services";
