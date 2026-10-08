@@ -1,6 +1,6 @@
 import type { ApiResponse } from "@/lib/api-client";
-import { failedResult, successResult } from "@/shared/result";
-import type { Result, ResultError, ResultPromise } from "@/shared/result";
+import { failedResult, successResult } from "@/utils/result";
+import type { Result, ResultError, ResultPromise } from "@/utils/result";
 import type { AuthGetCurrentUserProfile } from "../types/auth-query-types";
 import type {
   AuthCredentials,

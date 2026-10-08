@@ -1,4 +1,4 @@
-import { failedResult, successResult } from "@/shared/result";
+import { failedResult, successResult } from "@/utils/result";
 import { AuthGetCurrentUserProfile } from "../types/auth-query-types";
 import { AuthGetUserProfileRequest } from "../types/auth-requests-types";
 

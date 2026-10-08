@@ -1,4 +1,4 @@
-import { failedResult, successResult } from "@/shared/result";
+import { failedResult, successResult } from "@/utils/result";
 import type { ProjectGetListQuery, ProjectGetListRequest } from "../types";
 
 type Dependencies = {

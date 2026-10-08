@@ -44,7 +44,7 @@ The diagram shows available paths, not a single request path. Sign-in goes throu
 | `src/containers/`                                          | Multi-module page or section composition; feature-local composition stays inside its module                                     |
 | `src/lib/api-client/`                                      | Shared transport core, client/server API-client entry points, `ApiResponse` contract, and response constructors                 |
 | `src/lib/registry/`                                        | Dependency-injection container and composition root; runtime-specific injectors register global and module dependencies         |
-| `src/shared/result/`                                       | Discriminated `Result` contract and constructors                                                                                |
+| `src/utils/result/`                                       | Discriminated `Result` contract and constructors                                                                                |
 | `src/components/ui/`                                       | Reusable UI primitives, grouped by component category; most components have a colocated Storybook story                         |
 | `src/lib/`                                                 | Small shared utilities and canonical route paths                                                                                |
 | `mock-server/src/cases/`                                   | Typed route inventories grouped by auth, users, and projects                                                                    |
