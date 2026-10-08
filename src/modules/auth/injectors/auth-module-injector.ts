@@ -4,7 +4,7 @@ import {
   createRegistryToken,
   forEnvironment,
   type RegistryInjector,
-} from "@/lib/registry";
+} from "@/lib/registry/primitives";
 
 export const authApiClientToken =
   createRegistryToken<ApiClient>("auth-api-client");

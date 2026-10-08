@@ -1,7 +1,7 @@
 "use client";
 
 import { createAuthRegister } from "../actions/auth-register";
-import { authBffApiClient } from "../services/auth-bff-api-client";
+import { getAuthBffApiClient } from "../services/auth-bff-api-client";
 import { createAuthRegisterRequest } from "../services/auth-register-request";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -9,11 +9,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { authRegisterFormSchema } from "../schemas/auth-form-schemas";
 import type { AuthRegisterDto } from "../types/auth-types";
-
-const registerRequest = createAuthRegisterRequest({
-  apiClient: authBffApiClient,
-});
-const registerUseCase = createAuthRegister({ registerRequest });
 
 export const useAuthRegisterForm = () => {
   const router = useRouter();
@@ -30,6 +25,11 @@ export const useAuthRegisterForm = () => {
 
   const onSubmit = handleSubmit(async (details) => {
     try {
+      const registerUseCase = createAuthRegister({
+        registerRequest: createAuthRegisterRequest({
+          apiClient: getAuthBffApiClient(),
+        }),
+      });
       const registration = await registerUseCase(details);
       if (!registration.ok || !registration.data) {
         setError("root.server", {
