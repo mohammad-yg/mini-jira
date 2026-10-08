@@ -2,14 +2,14 @@
 
 ## Frontend HTTP contract
 
-API transport code lives in `src/lib/api-client/`. The client-side entry at `client.ts` exports the registry-provided `clientApiClient` and `createClientApiClient(baseUrl)`; the server-side entry at `server.ts` exports the registry-provided `serverApiClient`, `createServerApiClient(accessToken)`, and request-bound `createBffApiClient(request)`. API-client-owned injection functions live next to the client factories; `src/lib/registry/injectors/` composes them with module injectors for each runtime. Factories remain available for request-bound tokens or custom base URLs. The shared core supports:
+API transport code lives in `src/lib/api-client/`. `api-client-client.ts` exports `createClientApiClient({ bffApiBaseUrl, fetcher })`; `api-client-server.ts` exports the server-only `createServerApiClient({ apiServerBaseUrl, fetcher })`. The public barrel exports both factories and the shared `ApiClient` contract. The registry uses `provideForRuntime("apiClient", { client, server })` to select and execute only the matching factory during `build()`. Both factories use the shared request and response contracts and support:
 
 - supports `GET`, `POST`, `PUT`, `PATCH`, and `DELETE`, query parameters, headers, abort signals, and optional credentials;
 - serializes defined request bodies as JSON and sets `Accept: application/json`;
 - parses JSON responses, preserves non-JSON text, and treats 204/205 as no content;
 - uses `cache: "no-store"` and converts HTTP/network failures into `ApiResponse` instead of throwing them to callers.
 
-The browser client defaults to `NEXT_PUBLIC_API_URL` or `http://localhost:4000/api/v1`. Auth and project browser clients use the relative base `"/api/bff"`, so `auth/register` and `projects` become same-origin BFF requests. The server client defaults to `API_URL`, then `NEXT_PUBLIC_API_URL`, then `http://localhost:4000/api/v1`; prefer `API_URL` for a server-only backend address.
+The current registry configures the browser base as `/` and the server base as `http://localhost:4000/api/v1/`. Pass the desired URLs and `fetch` implementation to the relevant factory; the factories do not read environment variables themselves.
 
 The `ApiClient`, request options, `ApiResponse` contract, and response constructors live in `src/lib/api-client/` and are exposed through its public barrel. Feature request/response types belong in the feature module. Keep `ApiResponse` as the transport contract and map it to `Result` only where an application-level outcome is needed.
 
@@ -44,4 +44,4 @@ The Fastify request hook requires a bearer access token for API requests other t
 6. Add behavior-focused tests for the contract. The current every-route smoke test does not prove correctness.
 7. Update this guide if route scope, auth behavior, response shape, storage behavior, or API verification changes.
 
-The frontend project-list service calls `/api/bff/projects`. BFF Route Handlers create a request-bound server client, which reads the backend access token from the encrypted Auth.js cookie and adds its bearer header to backend calls. Routes check the client's `isAuthenticated` result; token extraction and header construction stay inside the server API client. Keep product BFF routes in their own feature path; do not route project requests through `/api/bff/auth/*`.
+The project BFF Route Handler still imports `createBffApiClient` from the removed `@/lib/api-client/server` entry. That consumer has not yet been migrated to the split server factory, so its request-bound authentication flow is currently a known gap. Keep product BFF routes in their own feature path; do not route project requests through `/api/bff/auth/*`.
