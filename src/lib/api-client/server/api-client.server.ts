@@ -150,37 +150,33 @@ export const createServerApiClient =
   }: {
     fetcher: typeof fetch,
     serverBaseUrl: string,
-  }): ServerApiClient =>
-    (userCookies) => {
-      console.log({ serverBaseUrl })
-      const accessToken = userCookies.get('authjs.session-token');
-      const defaultHeaders: HeadersInit = {
-        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-      };
-
-      const request = createRequest(serverBaseUrl, fetcher, defaultHeaders);
-
-      const withMethod =
-        (method: ApiRequestConfig["method"]) =>
-          <TData = unknown, TBody = unknown>(
-            url: string,
-            body?: TBody,
-            options: ApiRequestOptions = {},
-          ) =>
-            request<TData, TBody>(url, { baseUrl: serverBaseUrl, ...options, method, body });
-
-      return {
-        request,
-        get: (url, options = {}) => request(url, { baseUrl: serverBaseUrl, ...options, method: "GET" }),
-        post: withMethod("POST"),
-        put: withMethod("PUT"),
-        patch: withMethod("PATCH"),
-        delete: (url, options = {}) =>
-          request(url, {
-            baseUrl: serverBaseUrl,
-            ...options,
-            method: "DELETE",
-            body: options.body,
-          }),
-      };
+  }): ServerApiClient => {
+    const defaultHeaders: HeadersInit = {
     };
+
+    const request = createRequest(serverBaseUrl, fetcher, defaultHeaders);
+
+    const withMethod =
+      (method: ApiRequestConfig["method"]) =>
+        <TData = unknown, TBody = unknown>(
+          url: string,
+          body?: TBody,
+          options: ApiRequestOptions = {},
+        ) =>
+          request<TData, TBody>(url, { baseUrl: serverBaseUrl, ...options, method, body });
+
+    return {
+      request,
+      get: (url, options = {}) => request(url, { baseUrl: serverBaseUrl, ...options, method: "GET" }),
+      post: withMethod("POST"),
+      put: withMethod("PUT"),
+      patch: withMethod("PATCH"),
+      delete: (url, options = {}) =>
+        request(url, {
+          baseUrl: serverBaseUrl,
+          ...options,
+          method: "DELETE",
+          body: options.body,
+        }),
+    };
+  };

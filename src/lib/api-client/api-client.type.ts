@@ -1,3 +1,4 @@
+import { AppCookies } from "@/types/cookies.type";
 import type { ApiResponse } from "./api-response.type";
 
 export type ApiHttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -15,6 +16,7 @@ export interface ApiRequestOptions {
   signal?: AbortSignal;
   credentials?: RequestCredentials;
   baseUrl?: string;
+  cookies?: AppCookies
 }
 
 export interface ApiRequestConfig<TBody = unknown> extends ApiRequestOptions {
