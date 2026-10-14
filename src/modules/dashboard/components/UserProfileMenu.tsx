@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/overlays/DropdownMenu";
 import { useAuth } from "@/modules/auth/hooks";
+import { redirect } from "next/navigation";
 
 const initialsFromName = (name: string) =>
   name
@@ -26,7 +27,7 @@ const initialsFromName = (name: string) =>
 export function UserProfileMenu() {
   const { user, logout } = useAuth();
   const handleSignOut = async () => {
-    await logout();
+    await logout(redirect);
   };
 
   return (
