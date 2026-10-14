@@ -1,15 +1,9 @@
 import { failedResult, successResult } from "@/utils/result";
+import { createAuthGetUserProfileRequest } from "../requests/auth-profile-request";
 import { AuthGetCurrentUserProfile } from "../types/auth-query.type";
-import { AuthGetUserProfileRequest } from "../types/auth-requests.type";
 
-type Dependencies = {
-  getProfileUserRequest: AuthGetUserProfileRequest;
-};
-
-export const createAuthGetCurrentUserProfile = (
-  deps: Dependencies,
-): AuthGetCurrentUserProfile => {
-  const { getProfileUserRequest } = deps;
+export const createAuthGetCurrentUserProfile = (): AuthGetCurrentUserProfile => {
+  const getProfileUserRequest = createAuthGetUserProfileRequest();
 
   return async () => {
     const response = await getProfileUserRequest();

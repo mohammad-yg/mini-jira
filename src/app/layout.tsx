@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { TooltipProvider } from "@/components/ui/overlays";
 import "./globals.css";
+import { SessionProvider } from "next-auth/react";
+import type { ReactNode } from "react";
 
 const geistSans = localFont({
   src: "./fonts/geist-latin.woff2",
@@ -22,14 +24,16 @@ export const metadata: Metadata = {
   description: "A focused workspace for managing projects and team work.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <TooltipProvider>{children}</TooltipProvider>
+        <SessionProvider>
+          <TooltipProvider>{children}</TooltipProvider>
+        </SessionProvider>
       </body>
     </html>
   );

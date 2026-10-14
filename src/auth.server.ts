@@ -1,7 +1,12 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import type { AuthUser } from "@/modules/auth/types";
-import { createAuthServerRegistry } from "./modules/auth/server/auth-registry.server";
+import { createServerRegistry } from "@/lib/registry/server/registry-instance.server";
+import { cookies } from "next/headers";
+import type { AuthLoginResponse, AuthTokens } from "@/modules/auth/types";
+
+const getBackendApiClient = async () =>
+  createServerRegistry().get("apiClient")(await cookies());
 
 const accessTokenExpiresAt = (accessToken: string): number => {
   try {
@@ -26,18 +31,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, request) {
+      async authorize(credentials) {
         const email =
           typeof credentials.email === "string" ? credentials.email.trim() : "";
         const password =
           typeof credentials.password === "string" ? credentials.password : "";
         if (!email || !password) return null;
 
-        const loginAction = createAuthServerRegistry(
-          request.headers.get("cookie") ?? "",
-        ).get("authLoginAction");
-
-        const response = await loginAction({ email, password });
+        const response = await (await getBackendApiClient()).post<
+          AuthLoginResponse,
+          { email: string; password: string }
+        >("auth/login", { email, password });
         if (!response.ok || !response.data?.user) return null;
 
         const user = response.data.user;
@@ -83,10 +87,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return token;
       }
 
-      const authRefreshRequest =
-        createAuthServerRegistry("").get("authRefreshRequest");
-
-      const refreshed = await authRefreshRequest(refreshToken);
+      const refreshed = await (await getBackendApiClient()).post<AuthTokens>(
+        "auth/refresh",
+        { refreshToken },
+      );
       if (!refreshed.ok || !refreshed.data) {
         token.authError = "RefreshAccessTokenError";
         return token;
@@ -118,10 +122,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         "token" in event ? event.token?.backendAccessToken : undefined;
       if (!accessToken) return;
 
-      const authLogoutAction =
-        createAuthServerRegistry("").get("authLogoutAction");
-
-      await authLogoutAction(accessToken);
+      await (await getBackendApiClient()).post<null>("auth/logout", undefined, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
     },
   },
 });

@@ -1,10 +1,10 @@
 import type { ApiResponse } from "@/lib/api-client";
+import type { SignInResponse } from "next-auth/react";
+import type { Session } from "next-auth";
 import type {
   AuthCredentials,
-  AuthLoginResponse,
   AuthRegisterDto,
   AuthRegistrationResponse,
-  AuthTokens,
   AuthUser,
 } from "./auth.type";
 
@@ -13,12 +13,8 @@ export type AuthRegisterRequest = (
 ) => Promise<ApiResponse<AuthRegistrationResponse>>;
 export type AuthLoginRequest = (
   credentials: AuthCredentials,
-) => Promise<ApiResponse<AuthLoginResponse>>;
-export type AuthLogoutRequest = (
-  accessToken?: string,
-) => Promise<ApiResponse<null>>;
-export type AuthRefreshRequest = (
-  refreshToken: string,
-) => Promise<ApiResponse<AuthTokens>>;
+) => Promise<SignInResponse>;
+export type AuthLogoutRequest = () => Promise<{ url: string }>;
+export type AuthRefreshRequest = () => Promise<Session | null>;
 
 export type AuthGetUserProfileRequest = () => Promise<ApiResponse<AuthUser>>;

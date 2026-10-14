@@ -4,6 +4,6 @@ export * from "./containers";
 export * from "./hooks";
 export * from "./queries";
 export * from "./schemas";
-export * from "./services";
+export * from "./requests";
 export * from "./store";
 export * from "./types";

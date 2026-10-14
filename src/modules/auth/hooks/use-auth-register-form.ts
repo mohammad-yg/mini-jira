@@ -23,7 +23,7 @@ export const useAuthRegisterForm = () => {
 
   const handleRegisterSubmit = handleSubmit(async (details) => {
     try {
-      const registerUseCase = authRegistry.get('authRegister')
+      const registerUseCase = authRegistry.get("authRegisterAction");
       const registration = await registerUseCase(details);
       if (!registration.ok || !registration.data) {
         setError("root.server", {

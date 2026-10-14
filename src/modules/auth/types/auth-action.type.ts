@@ -1,45 +1,20 @@
-import type {
-  AuthLoginRequest,
-  AuthLogoutRequest,
-  AuthRegisterRequest,
-} from "./auth-requests.type";
+import type { SignInResponse } from "next-auth/react";
 import type {
   AuthCredentials,
-  AuthLoginResponse,
   AuthRegisterDto,
   AuthRegistrationResponse,
 } from "./auth.type";
 import type { ApiResponse } from "@/lib/api-client";
 
-export interface AuthLoginActionDependencies {
-  loginRequest: AuthLoginRequest;
-}
-
 export type AuthLoginAction = (
   credentials: AuthCredentials,
-) => Promise<ApiResponse<AuthLoginResponse>>;
-export type AuthLoginFactory = (
-  dependencies: AuthLoginActionDependencies,
-) => AuthLoginAction;
-
-export interface AuthRegisterActionDependencies {
-  registerRequest: AuthRegisterRequest;
-}
+) => Promise<SignInResponse>;
+export type AuthLoginFactory = () => AuthLoginAction;
 
 export type AuthRegisterAction = (
   dto: AuthRegisterDto,
 ) => Promise<ApiResponse<AuthRegistrationResponse>>;
-export type AuthRegisterFactory = (
-  dependencies: AuthRegisterActionDependencies,
-) => AuthRegisterAction;
+export type AuthRegisterFactory = () => AuthRegisterAction;
 
-export interface AuthLogoutActionDependencies {
-  logoutRequest: AuthLogoutRequest;
-}
-
-export type AuthLogoutAction = (
-  accessToken?: string,
-) => Promise<ApiResponse<null>>;
-export type AuthLogoutFactory = (
-  dependencies: AuthLogoutActionDependencies,
-) => AuthLogoutAction;
+export type AuthLogoutAction = () => Promise<{ url: string }>;
+export type AuthLogoutFactory = () => AuthLogoutAction;

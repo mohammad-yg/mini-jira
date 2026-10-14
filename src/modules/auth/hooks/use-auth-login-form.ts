@@ -1,11 +1,11 @@
 "use client";
 
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { authLoginFormSchema } from "../schemas/auth-form.schema";
 import type { AuthCredentials } from "../types/auth.type";
+import { authRegistry } from "../auth-registry";
 
 export const useAuthLoginForm = () => {
   const router = useRouter();
@@ -22,10 +22,7 @@ export const useAuthLoginForm = () => {
 
   const handleLoginSubmit = handleSubmit(async (credentials) => {
     try {
-      const result = await signIn("credentials", {
-        ...credentials,
-        redirect: false,
-      });
+      const result = await authRegistry.get("authLoginAction")(credentials);
       if (!result || result.error) {
         setError("root.server", { message: "Email or password is incorrect." });
         return;
