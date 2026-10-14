@@ -11,11 +11,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/overlays/DropdownMenu";
 import paths from "@/lib/paths.constants";
-import type { DashboardProject } from "../types";
+import { Project, ProjectListItem } from "@/modules/projects";
 
 type Props = {
-  projects: DashboardProject[];
-  selectedProject: DashboardProject | null;
+  projects: ProjectListItem[];
+  selectedProject: Project | null;
 };
 
 export function SelectedProjectMenu({ projects, selectedProject }: Props) {

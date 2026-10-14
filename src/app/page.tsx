@@ -1,5 +1,5 @@
 import { DashboardHome } from "@/modules/dashboard/containers";
 
-export default function HomePage() {
-  return <DashboardHome />;
+export default async function HomePage() {
+  return <DashboardHome projects={[]} selectedProject={null} />;
 }

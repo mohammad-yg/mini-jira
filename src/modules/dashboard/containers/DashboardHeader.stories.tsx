@@ -5,7 +5,7 @@ import { DashboardHeader } from "./DashboardHeader";
 const meta = {
   title: "Dashboard/Header",
   component: DashboardHeader,
-  args: { signOutAction: async () => undefined },
+  args: { projects: [], selectedProject: null },
   parameters: { layout: "fullscreen" },
 } satisfies Meta<typeof DashboardHeader>;
 export default meta;
