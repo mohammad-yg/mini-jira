@@ -12,13 +12,10 @@ type Props = {
   initialProjects: ProjectList[];
 };
 
-export function ProjectsPageContainer({
-  signOutAction,
-  initialProjects,
-}: Props) {
+export function ProjectsPageContainer({ initialProjects }: Props) {
   return (
     <div className="min-h-screen">
-      <DashboardHeader signOutAction={signOutAction} />
+      <DashboardHeader />
       <main className="mx-auto w-full max-w-7xl px-6 py-10 sm:px-8">
         <div className="mb-8 flex items-end justify-between gap-4">
           <div>

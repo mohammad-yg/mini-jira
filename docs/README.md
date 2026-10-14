@@ -22,7 +22,7 @@ This directory describes the implemented project as it exists in source. Read th
 
 ## Current implementation snapshot
 
-- The app uses the Next.js App Router. The dashboard header uses static mock data; the projects list starts from its supplied SWR fallback (currently empty) and revalidates through an authenticated projects BFF. Sign-in and sign-up are the other backend-connected product flows.
+- The app uses the Next.js App Router. The dashboard user menu loads the current profile through the auth store and same-origin auth BFF; the dashboard sidebar currently shows local demo issue/task data. The projects list starts from its supplied SWR fallback (currently empty) and revalidates through an authenticated projects BFF. Sign-in and sign-up are the other backend-connected product flows.
 - Frontend features live under `src/modules/`; shared code stays directly under `src/`. Cross-module page and section compositions belong under `src/containers/`. See [architecture](architecture.md) for public export and dependency rules.
 - `src/auth.server.ts` configures Auth.js credentials and the backend token lifecycle by consuming the auth module's public API. `src/proxy.ts` performs page-level redirects; it does not protect API routes.
 - Current feature modules include `src/modules/auth/`, `src/modules/projects/`, and `src/modules/dashboard/`. Use module and subfolder `index.ts` barrels for all imports crossing a module boundary.

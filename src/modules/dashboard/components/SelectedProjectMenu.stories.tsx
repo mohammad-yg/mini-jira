@@ -1,10 +1,22 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect, userEvent, within } from "storybook/test";
-import {
-  dashboardProjects,
-  selectedDashboardProject,
-} from "../data/dashboard-mock-data";
 import { SelectedProjectMenu } from "./SelectedProjectMenu";
+
+const dashboardProjects = [
+  {
+    id: "mini-jira",
+    name: "Mini Jira",
+    key: "MJ",
+    description: "Plan and track team work.",
+  },
+  {
+    id: "atlas-mobile",
+    name: "Atlas Mobile",
+    key: "AM",
+    description: "The Atlas product workspace.",
+  },
+];
+const selectedDashboardProject = dashboardProjects[0];
 
 const meta = {
   title: "Dashboard/Header/Selected project",

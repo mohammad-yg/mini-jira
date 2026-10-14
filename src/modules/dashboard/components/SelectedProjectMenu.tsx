@@ -15,7 +15,7 @@ import type { DashboardProject } from "../types";
 
 type Props = {
   projects: DashboardProject[];
-  selectedProject: DashboardProject;
+  selectedProject: DashboardProject | null;
 };
 
 export function SelectedProjectMenu({ projects, selectedProject }: Props) {
@@ -26,15 +26,15 @@ export function SelectedProjectMenu({ projects, selectedProject }: Props) {
           <Button
             variant="ghost"
             className="h-10 min-w-0 max-w-44 justify-start gap-2 px-2 sm:max-w-56"
-            aria-label={`Open project menu. Selected project: ${selectedProject.name}`}
+            aria-label={`Open project menu. Selected project: ${selectedProject?.name}`}
           />
         }
       >
         <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-primary/10 text-xs font-semibold text-primary">
-          {selectedProject.key}
+          {selectedProject?.key}
         </span>
         <span className="hidden min-w-0 truncate text-sm font-medium sm:block">
-          {selectedProject.name}
+          {selectedProject?.name}
         </span>
         <ChevronDown
           aria-hidden="true"
@@ -54,7 +54,7 @@ export function SelectedProjectMenu({ projects, selectedProject }: Props) {
                 {project.key}
               </span>
               <span className="min-w-0 flex-1 truncate">{project.name}</span>
-              {project.id === selectedProject.id ? (
+              {project.id === selectedProject?.id ? (
                 <Check
                   aria-label="Selected project"
                   className="size-4 text-primary"
