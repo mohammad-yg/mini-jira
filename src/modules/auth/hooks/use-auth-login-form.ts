@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { authLoginFormSchema } from "../schemas/auth-form.schema";
 import type { AuthCredentials } from "../types/auth.type";
-import { authRegistry } from "../auth-registry";
+import { clientAuthRegistry } from "../client/auth-registry.client";
 
 export const useAuthLoginForm = () => {
   const router = useRouter();
@@ -22,7 +22,7 @@ export const useAuthLoginForm = () => {
 
   const handleLoginSubmit = handleSubmit(async (credentials) => {
     try {
-      const result = await authRegistry.get("authLoginAction")(credentials);
+      const result = await clientAuthRegistry.get("authLoginAction")(credentials);
       if (!result || result.error) {
         setError("root.server", { message: "Email or password is incorrect." });
         return;

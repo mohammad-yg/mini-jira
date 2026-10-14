@@ -1,14 +1,14 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { authRegistry } from "../auth-registry";
 import paths from "@/lib/paths.constants";
+import { clientAuthRegistry } from "../client/auth-registry.client";
 
 export const useAuth = () => {
   const { data: session, status } = useSession();
 
   const logout = (redirect: (path: string) => void) => {
-    authRegistry.get("authLogoutAction")();
+    clientAuthRegistry.get("authLogoutAction")();
     redirect(paths.auth.signIn);
   }
 

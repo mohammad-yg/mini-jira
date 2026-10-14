@@ -1,0 +1,1 @@
+export { createClientAuthRegisterRequest } from './auth-register-request'

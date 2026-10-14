@@ -1,4 +1,4 @@
-import { createServerRegistry } from "@/lib/registry/server/registry-instance.server";
+import { serverGlobalRegistry } from "@/lib/registry/server/registry-instance.server";
 import type { AuthRegisterDto, AuthRegistrationResponse } from "@/modules/auth/types";
 import { cookies } from "next/headers";
 
@@ -33,16 +33,16 @@ export async function POST(request: Request) {
     return errorResponse("Name, email, and password are required", 400);
   }
 
-  const apiClient = createServerRegistry()
-    .get("apiClient")(await cookies());
+  const apiClient = (await serverGlobalRegistry()).apiClient(await cookies())
   const result = await apiClient.post<
     AuthRegistrationResponse,
     AuthRegisterDto
-  >("auth/register", {
+  >("/auth/register", {
     name: dto.name,
     email: dto.email,
     password: dto.password,
   });
+
 
   if (!result.ok || !result.data) {
     return errorResponse(

@@ -1,19 +1,15 @@
 import type { ApiClient } from "@/lib/api-client";
-import type { AuthRegisterRequest } from "../types/auth-requests.type";
-import type {
-  AuthRegisterDto,
-  AuthRegistrationResponse,
-} from "../types/auth.type";
+import { AuthRegisterDto, AuthRegisterRequest, AuthRegistrationResponse } from "../../types";
 
 type Dependencies = {
   apiClient: ApiClient;
   endpoint?: string;
 };
 
-export const createAuthRegisterRequest: (
+export const createClientAuthRegisterRequest: (
   deps: Dependencies,
 ) => AuthRegisterRequest = (deps) => {
-  const { apiClient, endpoint = "auth/register" } = deps;
+  const { apiClient, endpoint = "/auth/register" } = deps;
 
   return (dto: AuthRegisterDto) => {
     const body = { ...dto };

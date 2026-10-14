@@ -4,7 +4,7 @@ import type {
   AuthRegisterDto,
   AuthRegistrationResponse,
 } from "./auth.type";
-import type { ApiResponse } from "@/lib/api-client";
+import { ResultPromise } from "@/utils/result";
 
 export type AuthLoginAction = (
   credentials: AuthCredentials,
@@ -13,7 +13,7 @@ export type AuthLoginFactory = () => AuthLoginAction;
 
 export type AuthRegisterAction = (
   dto: AuthRegisterDto,
-) => Promise<ApiResponse<AuthRegistrationResponse>>;
+) => ResultPromise<AuthRegistrationResponse>;
 export type AuthRegisterFactory = () => AuthRegisterAction;
 
 export type AuthLogoutAction = () => Promise<{ url: string }>;

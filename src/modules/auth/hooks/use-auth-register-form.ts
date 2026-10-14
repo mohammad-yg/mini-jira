@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { authRegisterFormSchema } from "../schemas/auth-form.schema";
 import type { AuthRegisterDto } from "../types/auth.type";
-import { authRegistry } from "../auth-registry";
+import { clientAuthRegistry } from "../client/auth-registry.client";
 
 export const useAuthRegisterForm = () => {
   const router = useRouter();
@@ -23,14 +23,20 @@ export const useAuthRegisterForm = () => {
 
   const handleRegisterSubmit = handleSubmit(async (details) => {
     try {
-      const registerUseCase = authRegistry.get("authRegisterAction");
-      const registration = await registerUseCase(details);
-      if (!registration.ok || !registration.data) {
-        setError("root.server", {
+      const registerAction = clientAuthRegistry.get("authRegisterAction");
+
+      const registration = await registerAction(details);
+      if (!registration.success) {
+        setError("root", {
           message:
             registration.error?.message ?? "Could not create your account.",
         });
         return;
+      }
+      if (registration.success && !registration.data) {
+        setError("root", {
+          message: "An unknown error occurred while creating your account.",
+        });
       }
 
       const login = await signIn("credentials", {
