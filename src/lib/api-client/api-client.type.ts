@@ -14,6 +14,7 @@ export interface ApiRequestOptions {
   query?: ApiQuery;
   signal?: AbortSignal;
   credentials?: RequestCredentials;
+  baseUrl?: string;
 }
 
 export interface ApiRequestConfig<TBody = unknown> extends ApiRequestOptions {
@@ -51,3 +52,5 @@ export interface ApiClient {
     options?: ApiRequestOptions & { body?: TBody },
   ): Promise<ApiResponse<TData>>;
 }
+
+export type ClientApiClient = ApiClient;

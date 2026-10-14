@@ -1,1 +1,1 @@
-export { baseRegistry, type GlobalRegistry } from './registry-instance.client'
+export { clientGlobalRegistry } from './registry-instance.client'

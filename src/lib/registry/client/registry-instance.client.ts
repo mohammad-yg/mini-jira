@@ -1,20 +1,32 @@
-import type { AppConfig } from "@/config";
+import 'client-only'
+
+import { AppConfig } from "@/config/types";
+
+import { createClientApiClient } from '@/lib/api-client/client';
+import { Logger } from '@/lib/logger';
+import { createClientLogger } from '@/lib/logger/client';
+import { ClientApiClient } from '@/lib/api-client/api-client.type';
+
 import { createRegistry } from "../registry.factory";
-import type { Logger } from "@/lib/logger";
-import { createClientApiClient } from "@/lib/api-client/client";
-import { createClientLogger } from "@/lib/logger/client";
+import { Prettify } from '../registry.type';
 
-export const baseRegistry = createRegistry()
-  .provide<"config", AppConfig>("config", () => ({
-    bffApiBaseUrl: "/",
-    apiServerBaseUrl: "http://localhost:4000/api/v1/",
-    appName: ''
-  }))
-  .provide("apiClient", ({ config }) => createClientApiClient({
-    bffApiBaseUrl: config.bffApiBaseUrl,
-    fetcher: fetch,
-  }),)
-  .provide<"logger", Logger>("logger", ({ config }) => createClientLogger({ appName: config.appName }))
-  .build();
+const API_SERVER_BASE_URL = process.env.NEXT_PUBLIC_API_SERVER_BASE_URL;
+const APP_BASE_URL = process.env.NEXT_PUBLIC_APP_BASE_URL;
+const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME;
 
-export type GlobalRegistry = typeof baseRegistry;
+const clientGlobalRegistryBuild =
+  createRegistry()
+    .provide<"config", AppConfig>("config", () => ({
+      apiServerBaseUrl: API_SERVER_BASE_URL,
+      appBaseUrl: APP_BASE_URL,
+      appName: APP_NAME
+    }))
+    .provide<'apiClient', ClientApiClient>("apiClient", ({ config }) => createClientApiClient({
+      fetcher: fetch,
+      appBaseUrl: config.appBaseUrl
+    }))
+    .provide<"logger", Logger>("logger", ({ config }) => createClientLogger({ appName: config.appName }))
+    .build();
+
+type ClientGlobalRegistry = Prettify<typeof clientGlobalRegistryBuild.instances>;
+export const clientGlobalRegistry: ClientGlobalRegistry = clientGlobalRegistryBuild.instances

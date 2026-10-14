@@ -85,7 +85,7 @@ const getResponseError = (
 };
 
 const createRequest =
-    (apiBaseUrl: string, fetcher: typeof fetch, defaultHeaders?: HeadersInit) =>
+    (fetcher: typeof fetch, baseUrl: string, defaultHeaders?: HeadersInit) =>
         async <TData, TBody>(
             path: string,
             config: ApiRequestConfig<TBody>,
@@ -102,7 +102,7 @@ const createRequest =
             }
 
             try {
-                const response = await fetcher(buildUrl(path, config.query, apiBaseUrl), {
+                const response = await fetcher(buildUrl(path, config.query, baseUrl), {
                     method: config.method,
                     headers,
                     body: hasBody ? JSON.stringify(config.body) : undefined,
@@ -134,13 +134,13 @@ const createRequest =
 
 /** Builds a browser API client with injectable transport dependencies. */
 export const createClientApiClient = ({
-    bffApiBaseUrl,
+    appBaseUrl,
     fetcher,
 }: {
-    bffApiBaseUrl: string;
+    appBaseUrl: string,
     fetcher: typeof fetch;
 }): ApiClient => {
-    const request = createRequest(bffApiBaseUrl, fetcher);
+    const request = createRequest(fetcher, appBaseUrl);
 
     const withMethod =
         (method: ApiRequestConfig["method"]) =>

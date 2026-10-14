@@ -145,19 +145,20 @@ const createRequest =
 /** Builds a server API client with an optional request-scoped bearer token. */
 export const createServerApiClient =
   ({
-    apiServerBaseUrl,
     fetcher,
+    serverBaseUrl
   }: {
-    apiServerBaseUrl: string;
-    fetcher: typeof fetch;
+    fetcher: typeof fetch,
+    serverBaseUrl: string,
   }): ServerApiClient =>
     (userCookies) => {
-      const accessToken = userCookies.get('accessToken');
+      console.log({ serverBaseUrl })
+      const accessToken = userCookies.get('authjs.session-token');
       const defaultHeaders: HeadersInit = {
         ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       };
 
-      const request = createRequest(apiServerBaseUrl, fetcher, defaultHeaders);
+      const request = createRequest(serverBaseUrl, fetcher, defaultHeaders);
 
       const withMethod =
         (method: ApiRequestConfig["method"]) =>
@@ -166,16 +167,17 @@ export const createServerApiClient =
             body?: TBody,
             options: ApiRequestOptions = {},
           ) =>
-            request<TData, TBody>(url, { ...options, method, body });
+            request<TData, TBody>(url, { baseUrl: serverBaseUrl, ...options, method, body });
 
       return {
         request,
-        get: (url, options = {}) => request(url, { ...options, method: "GET" }),
+        get: (url, options = {}) => request(url, { baseUrl: serverBaseUrl, ...options, method: "GET" }),
         post: withMethod("POST"),
         put: withMethod("PUT"),
         patch: withMethod("PATCH"),
         delete: (url, options = {}) =>
           request(url, {
+            baseUrl: serverBaseUrl,
             ...options,
             method: "DELETE",
             body: options.body,

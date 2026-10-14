@@ -1,5 +1,5 @@
 export interface AppConfig {
-  bffApiBaseUrl: string;
+  appBaseUrl: string;
   apiServerBaseUrl: string;
   appName: string
 }

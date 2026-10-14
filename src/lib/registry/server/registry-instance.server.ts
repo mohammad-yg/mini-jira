@@ -1,27 +1,29 @@
-import "server-only";
-import { createRegistry } from "../registry.factory";
-import { AppConfig } from "@/config";
-import {
-  createServerApiClient,
-  ServerApiClient,
-} from "@/lib/api-client/server";
-import { Logger } from "@/lib/logger";
-import { createServerLogger } from "@/lib/logger/server";
+import 'server-only'
 
-export const createServerRegistry = () =>
-  createRegistry()
-    .provide<"config", AppConfig>("config", () => ({
-      bffApiBaseUrl: "/",
-      apiServerBaseUrl: "http://localhost:4000/api/v1/",
-      appName: "",
-    }))
-    .provide<"apiClient", ServerApiClient>("apiClient", ({ config }) =>
-      createServerApiClient({
-        apiServerBaseUrl: config.apiServerBaseUrl,
-        fetcher: fetch,
-      }),
-    )
-    .provide<"logger", Logger>("logger", ({ config }) =>
-      createServerLogger({ appName: config.appName }),
-    )
-    .build();
+import { AppConfig } from '@/config/types';
+import { createServerApiClient } from '@/lib/api-client/server';
+import { createServerLogger } from '@/lib/logger/server';
+
+
+const API_SERVER_BASE_URL = process.env.NEXT_PUBLIC_API_SERVER_BASE_URL;
+const APP_BASE_URL = process.env.NEXT_PUBLIC_APP_BASE_URL;
+const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME;
+
+export const serverGlobalRegistry = async () => {
+  const config: AppConfig = {
+    apiServerBaseUrl: API_SERVER_BASE_URL,
+    appBaseUrl: APP_BASE_URL,
+    appName: APP_NAME
+  }
+
+  const apiClient = createServerApiClient({ fetcher: fetch, serverBaseUrl: config.apiServerBaseUrl });
+  const logger = createServerLogger({
+    appName: config.appName
+  })
+
+  return {
+    config,
+    apiClient,
+    logger
+  }
+}
