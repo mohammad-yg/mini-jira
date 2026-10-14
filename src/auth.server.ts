@@ -1,12 +1,11 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import type { AuthUser } from "@/modules/auth/types";
-import { cookies } from "next/headers";
 import type { AuthLoginResponse, AuthTokens } from "@/modules/auth/types";
 import { serverGlobalRegistry } from '@/lib/registry/server'
 
 const getBackendApiClient = async () =>
-  (await serverGlobalRegistry()).apiClient(await cookies());
+  (await serverGlobalRegistry()).apiClient;
 
 const accessTokenExpiresAt = (accessToken: string): number => {
   try {

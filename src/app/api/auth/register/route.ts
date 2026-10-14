@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     return errorResponse("Name, email, and password are required", 400);
   }
 
-  const apiClient = (await serverGlobalRegistry()).apiClient(await cookies())
+  const { apiClient } = (await serverGlobalRegistry());
   const result = await apiClient.post<
     AuthRegistrationResponse,
     AuthRegisterDto
