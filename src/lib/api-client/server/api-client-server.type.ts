@@ -1,3 +1,4 @@
 import { ApiClient } from "../api-client.type";
 
-export type ServerApiClient = ApiClient
+/** Creates an API client scoped to the incoming user's Cookie header. */
+export type ServerApiClient = (userCookies: string) => ApiClient;

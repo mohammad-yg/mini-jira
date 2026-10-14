@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import type { AuthUser } from "@/modules/auth/types";
-import { authServerRegistry } from "./modules/auth/server/auth-registry.server";
+import { createAuthServerRegistry } from "./modules/auth/server/auth-registry.server";
 
 const accessTokenExpiresAt = (accessToken: string): number => {
   try {
@@ -26,14 +26,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         const email =
           typeof credentials.email === "string" ? credentials.email.trim() : "";
         const password =
           typeof credentials.password === "string" ? credentials.password : "";
         if (!email || !password) return null;
 
-        const loginAction = authServerRegistry.get("authLoginAction");
+        const loginAction = createAuthServerRegistry(
+          request.headers.get("cookie") ?? "",
+        ).get("authLoginAction");
 
         const response = await loginAction({ email, password });
         if (!response.ok || !response.data?.user) return null;
@@ -81,7 +83,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return token;
       }
 
-      const authRefreshRequest = authServerRegistry.get("authRefreshRequest");
+      const authRefreshRequest =
+        createAuthServerRegistry("").get("authRefreshRequest");
 
       const refreshed = await authRefreshRequest(refreshToken);
       if (!refreshed.ok || !refreshed.data) {
@@ -115,7 +118,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         "token" in event ? event.token?.backendAccessToken : undefined;
       if (!accessToken) return;
 
-      const authLogoutAction = authServerRegistry.get("authLogoutAction");
+      const authLogoutAction =
+        createAuthServerRegistry("").get("authLogoutAction");
 
       await authLogoutAction(accessToken);
     },

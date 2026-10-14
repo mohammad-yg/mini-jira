@@ -8,19 +8,20 @@ import {
 import { Logger } from "@/lib/logger";
 import { createServerLogger } from "@/lib/logger/server";
 
-export const serverRegistry = createRegistry()
-  .provide<"config", AppConfig>("config", () => ({
-    bffApiBaseUrl: "/",
-    apiServerBaseUrl: "http://localhost:4000/api/v1/",
-    appName: "",
-  }))
-  .provide<"apiClient", ServerApiClient>("apiClient", ({ config }) =>
-    createServerApiClient({
-      apiServerBaseUrl: config.apiServerBaseUrl,
-      fetcher: fetch,
-    }),
-  )
-  .provide<"logger", Logger>("logger", ({ config }) =>
-    createServerLogger({ appName: config.appName }),
-  )
-  .build();
+export const createServerRegistry = () =>
+  createRegistry()
+    .provide<"config", AppConfig>("config", () => ({
+      bffApiBaseUrl: "/",
+      apiServerBaseUrl: "http://localhost:4000/api/v1/",
+      appName: "",
+    }))
+    .provide<"apiClient", ServerApiClient>("apiClient", ({ config }) =>
+      createServerApiClient({
+        apiServerBaseUrl: config.apiServerBaseUrl,
+        fetcher: fetch,
+      }),
+    )
+    .provide<"logger", Logger>("logger", ({ config }) =>
+      createServerLogger({ appName: config.appName }),
+    )
+    .build();

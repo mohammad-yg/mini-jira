@@ -1,10 +1,10 @@
 import type { NextRequest } from "next/server";
 import type { AuthRegisterDto } from "@/modules/auth/types";
 import {
-  authServerRegistry,
+  createAuthServerRegistry,
   createAuthBffRegistry,
 } from "@/modules/auth/server/auth-registry.server";
-import { serverRegistry } from "@/lib/registry/server/registry-instance.server";
+import { createServerRegistry } from "@/lib/registry/server/registry-instance.server";
 import { getAuthentication } from "@/modules/auth/server/auth-get-authentication.server";
 import { createServerApiClient } from "@/lib/api-client/server";
 
@@ -31,11 +31,12 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
   if (!authentication.isAuthenticated || !authentication.accessToken)
     return errorResponse("Unauthorized", 401);
 
-  const apiClient = createServerApiClient({
-    apiServerBaseUrl: serverRegistry.get("config").apiServerBaseUrl,
+  const apiClientFactory = createServerApiClient({
+    apiServerBaseUrl: createServerRegistry().get("config").apiServerBaseUrl,
     fetcher: fetch,
     accessToken: authentication.accessToken,
   });
+  const apiClient = apiClientFactory(request.headers.get("cookie") ?? "");
 
   const requestRegistry = createAuthBffRegistry(apiClient);
   const getCurrentProfile = requestRegistry.get(
@@ -78,7 +79,9 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
       return errorResponse("Name, email, and password are required", 400);
     }
 
-    const authRegisterAction = authServerRegistry.get("authRegisterAction");
+    const authRegisterAction = createAuthServerRegistry(
+      request.headers.get("cookie") ?? "",
+    ).get("authRegisterAction");
     const response = await authRegisterAction({
       name: dto.name,
       email: dto.email,
@@ -104,11 +107,12 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     if (!authentication.isAuthenticated || !authentication.accessToken)
       return errorResponse("Unauthorized", 401);
 
-    const apiClient = createServerApiClient({
-      apiServerBaseUrl: serverRegistry.get("config").apiServerBaseUrl,
+    const apiClientFactory = createServerApiClient({
+      apiServerBaseUrl: createServerRegistry().get("config").apiServerBaseUrl,
       fetcher: fetch,
       accessToken: authentication.accessToken,
     });
+    const apiClient = apiClientFactory(request.headers.get("cookie") ?? "");
 
     const requestRegistry = createAuthBffRegistry(apiClient);
     const authLogoutAction = requestRegistry.get("authLogoutAction");

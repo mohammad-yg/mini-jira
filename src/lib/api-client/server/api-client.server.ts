@@ -143,41 +143,44 @@ const createRequest =
   };
 
 /** Builds a server API client with an optional request-scoped bearer token. */
-export const createServerApiClient = ({
-  apiServerBaseUrl,
-  fetcher,
-  accessToken,
-}: {
-  apiServerBaseUrl: string;
-  fetcher: typeof fetch;
-  accessToken?: string;
-}): ServerApiClient => {
-  const defaultHeaders: HeadersInit = accessToken
-    ? { Authorization: `Bearer ${accessToken}` }
-    : {};
+export const createServerApiClient =
+  ({
+    apiServerBaseUrl,
+    fetcher,
+    accessToken,
+  }: {
+    apiServerBaseUrl: string;
+    fetcher: typeof fetch;
+    accessToken?: string;
+  }): ServerApiClient =>
+  (userCookies) => {
+    const defaultHeaders: HeadersInit = {
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+      ...(userCookies ? { Cookie: userCookies } : {}),
+    };
 
-  const request = createRequest(apiServerBaseUrl, fetcher, defaultHeaders);
+    const request = createRequest(apiServerBaseUrl, fetcher, defaultHeaders);
 
-  const withMethod =
-    (method: ApiRequestConfig["method"]) =>
-    <TData = unknown, TBody = unknown>(
-      url: string,
-      body?: TBody,
-      options: ApiRequestOptions = {},
-    ) =>
-      request<TData, TBody>(url, { ...options, method, body });
+    const withMethod =
+      (method: ApiRequestConfig["method"]) =>
+      <TData = unknown, TBody = unknown>(
+        url: string,
+        body?: TBody,
+        options: ApiRequestOptions = {},
+      ) =>
+        request<TData, TBody>(url, { ...options, method, body });
 
-  return {
-    request,
-    get: (url, options = {}) => request(url, { ...options, method: "GET" }),
-    post: withMethod("POST"),
-    put: withMethod("PUT"),
-    patch: withMethod("PATCH"),
-    delete: (url, options = {}) =>
-      request(url, {
-        ...options,
-        method: "DELETE",
-        body: options.body,
-      }),
+    return {
+      request,
+      get: (url, options = {}) => request(url, { ...options, method: "GET" }),
+      post: withMethod("POST"),
+      put: withMethod("PUT"),
+      patch: withMethod("PATCH"),
+      delete: (url, options = {}) =>
+        request(url, {
+          ...options,
+          method: "DELETE",
+          body: options.body,
+        }),
+    };
   };
-};

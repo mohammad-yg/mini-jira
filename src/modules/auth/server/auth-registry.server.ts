@@ -23,48 +23,58 @@ import {
   createAuthLogout,
   createAuthRegister,
 } from "../actions";
-import { serverRegistry } from "@/lib/registry/server/registry-instance.server";
+import { createServerRegistry } from "@/lib/registry/server/registry-instance.server";
 
-const baseDeps = serverRegistry.instances;
+export const createAuthServerRegistry = (userCookies: string) => {
+  const baseRegistry = createServerRegistry();
+  const baseDeps = {
+    config: baseRegistry.get("config"),
+    apiClient: baseRegistry.get("apiClient")(userCookies),
+  };
 
-export const authServerRegistry = createRegistry()
-  //requests
-  .provide<"authLoginRequest", AuthLoginRequest>("authLoginRequest", () =>
-    createAuthLoginRequest(baseDeps),
-  )
-  .provide<"authLogoutRequest", AuthLogoutRequest>("authLogoutRequest", () =>
-    createAuthLogoutRequest(baseDeps),
-  )
-  .provide<"authGetUserProfileRequest", AuthGetUserProfileRequest>(
-    "authGetUserProfileRequest",
-    () => createAuthGetUserProfileRequest(baseDeps),
-  )
-  .provide<"authRefreshRequest", AuthRefreshRequest>("authRefreshRequest", () =>
-    createAuthRefreshRequest(baseDeps),
-  )
-  .provide<"authRegisterRequest", AuthRegisterRequest>(
-    "authRegisterRequest",
-    () => createAuthRegisterRequest(baseDeps),
-  )
+  return (
+    createRegistry()
+      //requests
+      .provide<"authLoginRequest", AuthLoginRequest>("authLoginRequest", () =>
+        createAuthLoginRequest(baseDeps),
+      )
+      .provide<"authLogoutRequest", AuthLogoutRequest>(
+        "authLogoutRequest",
+        () => createAuthLogoutRequest(baseDeps),
+      )
+      .provide<"authGetUserProfileRequest", AuthGetUserProfileRequest>(
+        "authGetUserProfileRequest",
+        () => createAuthGetUserProfileRequest(baseDeps),
+      )
+      .provide<"authRefreshRequest", AuthRefreshRequest>(
+        "authRefreshRequest",
+        () => createAuthRefreshRequest(baseDeps),
+      )
+      .provide<"authRegisterRequest", AuthRegisterRequest>(
+        "authRegisterRequest",
+        () => createAuthRegisterRequest(baseDeps),
+      )
 
-  //actions
-  .provide<"authLoginAction", AuthLoginAction>(
-    "authLoginAction",
-    ({ authLoginRequest }) =>
-      createAuthLogin({ loginRequest: authLoginRequest }),
-  )
-  .provide<"authLogoutAction", AuthLogoutAction>(
-    "authLogoutAction",
-    ({ authLogoutRequest }) =>
-      createAuthLogout({ logoutRequest: authLogoutRequest }),
-  )
-  .provide<"authRegisterAction", AuthRegisterAction>(
-    "authRegisterAction",
-    ({ authRegisterRequest }) =>
-      createAuthRegister({ registerRequest: authRegisterRequest }),
-  )
+      //actions
+      .provide<"authLoginAction", AuthLoginAction>(
+        "authLoginAction",
+        ({ authLoginRequest }) =>
+          createAuthLogin({ loginRequest: authLoginRequest }),
+      )
+      .provide<"authLogoutAction", AuthLogoutAction>(
+        "authLogoutAction",
+        ({ authLogoutRequest }) =>
+          createAuthLogout({ logoutRequest: authLogoutRequest }),
+      )
+      .provide<"authRegisterAction", AuthRegisterAction>(
+        "authRegisterAction",
+        ({ authRegisterRequest }) =>
+          createAuthRegister({ registerRequest: authRegisterRequest }),
+      )
 
-  .build();
+      .build()
+  );
+};
 
 /** Creates auth dependencies bound to the current request's authenticated API client. */
 export const createAuthBffRegistry = (apiClient: ApiClient) =>
