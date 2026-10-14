@@ -3,9 +3,14 @@ import type { AuthLogoutRequest } from "../types/auth-requests.type";
 
 type Dependencies = {
   apiClient: ApiClient;
+  endpoint?: string;
 };
 
 export const createAuthLogoutRequest =
-  ({ apiClient }: Dependencies): AuthLogoutRequest =>
-  () =>
-    apiClient.post<null>("auth/logout", undefined);
+  ({ apiClient, endpoint = "auth/logout" }: Dependencies): AuthLogoutRequest =>
+  (accessToken) =>
+    apiClient.post<null>(endpoint, undefined, {
+      headers: accessToken
+        ? { Authorization: `Bearer ${accessToken}` }
+        : undefined,
+    });

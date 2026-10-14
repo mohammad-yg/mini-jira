@@ -6,6 +6,7 @@ import {
 } from "@/modules/auth/server/auth-registry.server";
 import { serverRegistry } from "@/lib/registry/server/registry-instance.server";
 import { getAuthentication } from "@/modules/auth/server/auth-get-authentication.server";
+import { createServerApiClient } from "@/lib/api-client/server";
 
 type RouteContext = {
   params: Promise<{ authPath: string[] }>;
@@ -26,11 +27,15 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
   if (authPath.join("/") !== "me")
     return errorResponse("Unsupported auth endpoint", 404);
 
-  const apiClient = serverRegistry.get('apiClient');
-  const { isAuthenticated } = await getAuthentication();
-
-  if (!isAuthenticated || !apiClient)
+  const authentication = await getAuthentication();
+  if (!authentication.isAuthenticated || !authentication.accessToken)
     return errorResponse("Unauthorized", 401);
+
+  const apiClient = createServerApiClient({
+    apiServerBaseUrl: serverRegistry.get("config").apiServerBaseUrl,
+    fetcher: fetch,
+    accessToken: authentication.accessToken,
+  });
 
   const requestRegistry = createAuthBffRegistry(apiClient);
   const getCurrentProfile = requestRegistry.get(
@@ -94,11 +99,16 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
   }
 
   if (action === "logout") {
-    const apiClient = serverRegistry.get('apiClient');
-    const isAuthenticated = await getAuthentication();
+    const authentication = await getAuthentication();
 
-    if (!isAuthenticated || !apiClient)
+    if (!authentication.isAuthenticated || !authentication.accessToken)
       return errorResponse("Unauthorized", 401);
+
+    const apiClient = createServerApiClient({
+      apiServerBaseUrl: serverRegistry.get("config").apiServerBaseUrl,
+      fetcher: fetch,
+      accessToken: authentication.accessToken,
+    });
 
     const requestRegistry = createAuthBffRegistry(apiClient);
     const authLogoutAction = requestRegistry.get("authLogoutAction");

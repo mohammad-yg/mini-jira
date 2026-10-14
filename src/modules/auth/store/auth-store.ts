@@ -110,6 +110,7 @@ export const createAuthStore = ({
 
     try {
       const result = await getCurrentUserUseCase();
+
       if (!result.success) {
         setState({ user: null, isLoading: false, error: result.error });
         return result;

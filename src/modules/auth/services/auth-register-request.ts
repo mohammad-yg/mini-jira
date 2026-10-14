@@ -7,17 +7,20 @@ import type {
 
 type Dependencies = {
   apiClient: ApiClient;
+  endpoint?: string;
 };
 
 export const createAuthRegisterRequest: (
   deps: Dependencies,
 ) => AuthRegisterRequest = (deps) => {
-  const { apiClient } = deps;
+  const { apiClient, endpoint = "auth/register" } = deps;
 
   return (dto: AuthRegisterDto) => {
-    const url = "auth/register";
     const body = { ...dto };
 
-    return apiClient.post<AuthRegistrationResponse, AuthRegisterDto>(url, body);
+    return apiClient.post<AuthRegistrationResponse, AuthRegisterDto>(
+      endpoint,
+      body,
+    );
   };
 };

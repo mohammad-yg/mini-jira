@@ -14,7 +14,9 @@ export type AuthRegisterRequest = (
 export type AuthLoginRequest = (
   credentials: AuthCredentials,
 ) => Promise<ApiResponse<AuthLoginResponse>>;
-export type AuthLogoutRequest = () => Promise<ApiResponse<null>>;
+export type AuthLogoutRequest = (
+  accessToken?: string,
+) => Promise<ApiResponse<null>>;
 export type AuthRefreshRequest = (
   refreshToken: string,
 ) => Promise<ApiResponse<AuthTokens>>;

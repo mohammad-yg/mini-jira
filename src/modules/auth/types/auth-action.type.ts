@@ -37,7 +37,9 @@ export interface AuthLogoutActionDependencies {
   logoutRequest: AuthLogoutRequest;
 }
 
-export type AuthLogoutAction = () => Promise<ApiResponse<null>>;
+export type AuthLogoutAction = (
+  accessToken?: string,
+) => Promise<ApiResponse<null>>;
 export type AuthLogoutFactory = (
   dependencies: AuthLogoutActionDependencies,
 ) => AuthLogoutAction;

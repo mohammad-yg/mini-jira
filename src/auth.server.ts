@@ -117,7 +117,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       const authLogoutAction = authServerRegistry.get("authLogoutAction");
 
-      await authLogoutAction();
+      await authLogoutAction(accessToken);
     },
   },
 });

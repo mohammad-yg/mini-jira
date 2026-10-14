@@ -2,7 +2,7 @@
 
 ## Frontend HTTP contract
 
-API transport code lives in `src/lib/api-client/`. `api-client.client.ts` exports `createClientApiClient({ bffApiBaseUrl, fetcher })`; `api-client.server.ts` exports the server-only `createServerApiClient({ apiServerBaseUrl, fetcher })`. The registry's global composition uses `provideForRuntime("apiClient", { client, server })` to select and eagerly execute only the matching factory during `build()`. Registry execution, dependency order, and known migration gaps are documented in [architecture](architecture.md#registry-and-dependency-injection-behavior). Both factories use the shared request and response contracts and support:
+API transport code lives in `src/lib/api-client/`. `api-client.client.ts` exports `createClientApiClient({ bffApiBaseUrl, fetcher })`; `api-client.server.ts` exports the server-only `createServerApiClient({ apiServerBaseUrl, fetcher, accessToken? })`. Server client construction is synchronous and does not read session state. Pass a bearer token explicitly when building a request-scoped client for an authenticated backend request; keep the shared server-registry client unauthenticated so credentials cannot leak between requests. Registry execution and dependency order are documented in [architecture](architecture.md#registry-and-dependency-injection-behavior). Both factories use the shared request and response contracts and support:
 
 - supports `GET`, `POST`, `PUT`, `PATCH`, and `DELETE`, query parameters, headers, abort signals, and optional credentials;
 - serializes defined request bodies as JSON and sets `Accept: application/json`;

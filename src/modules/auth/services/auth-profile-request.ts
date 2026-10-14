@@ -3,9 +3,13 @@ import type { AuthGetUserProfileRequest } from "../types/auth-requests.type";
 
 type Dependencies = {
   apiClient: ApiClient;
+  endpoint?: string;
 };
 
 export const createAuthGetUserProfileRequest =
-  ({ apiClient }: Dependencies): AuthGetUserProfileRequest =>
+  ({
+    apiClient,
+    endpoint = "auth/me",
+  }: Dependencies): AuthGetUserProfileRequest =>
   () =>
-    apiClient.get("auth/me");
+    apiClient.get(endpoint);
