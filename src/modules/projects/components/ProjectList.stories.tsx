@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { SWRConfig } from "swr";
 import { expect, within } from "storybook/test";
-import type { ProjectList as ProjectListData } from "../types";
+import type { ProjectListItem } from "../types";
 import { ProjectList } from "./ProjectList";
 
-const initialProjects: ProjectListData[] = [
+const initialProjects: ProjectListItem[] = [
   {
     id: "mini-jira",
     name: "Mini Jira",

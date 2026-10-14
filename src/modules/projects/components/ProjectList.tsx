@@ -2,11 +2,11 @@
 
 import { ArrowUpRight, FolderKanban } from "lucide-react";
 import { useProjectList } from "../hooks/use-project-list";
-import type { ProjectList } from "../types";
+import type { ProjectListItem } from "../types";
 import { projectsRegistry } from "../projects-registry";
 
 type ProjectListProps = {
-  initialValue: ProjectList[];
+  initialValue: ProjectListItem[];
 };
 
 export function ProjectList({ initialValue }: ProjectListProps) {

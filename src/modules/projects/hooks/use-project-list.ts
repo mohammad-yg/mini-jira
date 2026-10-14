@@ -1,7 +1,7 @@
 "use client";
 
 import useSWR from "swr";
-import type { ProjectList } from "../types";
+import type { ProjectListItem } from "../types";
 import { ProjectsListQuery } from "../types/project-query.type";
 import { useCallback } from "react";
 
@@ -11,7 +11,7 @@ type Dependencies = {
 
 const PROJECT_LIST_KEY = "/api/bff/projects";
 
-export const useProjectList = (initialValue: ProjectList[], deps: Dependencies) => {
+export const useProjectList = (initialValue: ProjectListItem[], deps: Dependencies) => {
   const { projectGetListQuery } = deps;
 
 
@@ -29,7 +29,7 @@ export const useProjectList = (initialValue: ProjectList[], deps: Dependencies) 
   },
     [projectGetListQuery])
 
-  return useSWR<ProjectList[], Error>(PROJECT_LIST_KEY, fetcher, {
+  return useSWR<ProjectListItem[], Error>(PROJECT_LIST_KEY, fetcher, {
     fallbackData: initialValue,
   });
 }

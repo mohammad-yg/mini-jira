@@ -4,12 +4,12 @@ import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/actions/Button";
 import { DashboardHeader } from "@/modules/dashboard/containers";
 import { ProjectList as ProjectListView } from "@/modules/projects/components";
-import type { ProjectList } from "@/modules/projects/types";
+import type { ProjectListItem } from "@/modules/projects/types";
 import paths from "@/lib/paths.constants";
 
 type Props = {
   signOutAction: NonNullable<ComponentProps<"form">["action"]>;
-  initialProjects: ProjectList[];
+  initialProjects: ProjectListItem[];
 };
 
 export function ProjectsPageContainer({ initialProjects }: Props) {

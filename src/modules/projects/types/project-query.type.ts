@@ -1,6 +1,6 @@
 import type { ResultPromise } from "@/utils/result";
-import type { ProjectList } from "./project.type";
+import type { ProjectListItem } from "./project.type";
 
 export type ProjectsListQuery = () => ResultPromise<
-  ProjectList[]
+  ProjectListItem[]
 >;

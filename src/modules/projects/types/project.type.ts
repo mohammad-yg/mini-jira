@@ -8,6 +8,6 @@ export interface Project {
   imageUrl?: string;
 }
 
-export type ProjectList = Project;
+export type ProjectListItem = Project;
 
-export type GetProjectsBff = () => ResultPromise<ProjectList[]>
+export type GetProjectsBff = () => ResultPromise<ProjectListItem[]>
