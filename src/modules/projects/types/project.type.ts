@@ -1,5 +1,3 @@
-import { ResultPromise } from "@/utils/result";
-
 export interface Project {
   id: string;
   name: string;
@@ -9,5 +7,3 @@ export interface Project {
 }
 
 export type ProjectListItem = Project;
-
-export type GetProjectsBff = () => ResultPromise<ProjectListItem[]>

@@ -1,27 +1,22 @@
 "use client";
 
 import { ArrowUpRight, FolderKanban } from "lucide-react";
-import { useProjectList } from "../hooks/use-project-list";
 import type { ProjectListItem } from "../types";
-import { projectsRegistry } from "../projects-registry";
 
 type ProjectListProps = {
   initialValue: ProjectListItem[];
 };
 
 export function ProjectList({ initialValue }: ProjectListProps) {
-  const projectGetListQuery = projectsRegistry.get("projectGetListQuery");
-
-  const { data, error } = useProjectList(initialValue, { projectGetListQuery });
-  const projects = data ?? initialValue;
+  const projects = initialValue;
 
   return (
     <>
-      {error ? (
+      {/* {error ? (
         <p className="mb-4 text-sm text-destructive" role="alert">
           Could not refresh the project list. Showing the initial projects.
         </p>
-      ) : null}
+      ) : null} */}
 
       {projects.length === 0 ? (
         <p className="rounded-xl border bg-card p-6 text-muted-foreground">

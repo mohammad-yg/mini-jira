@@ -1,5 +1,4 @@
 import Link from "next/link";
-import type { ComponentProps } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/actions/Button";
 import { DashboardHeader } from "@/modules/dashboard/containers";
@@ -8,14 +7,13 @@ import type { ProjectListItem } from "@/modules/projects/types";
 import paths from "@/lib/paths.constants";
 
 type Props = {
-  signOutAction: NonNullable<ComponentProps<"form">["action"]>;
   initialProjects: ProjectListItem[];
 };
 
 export function ProjectsPageContainer({ initialProjects }: Props) {
   return (
     <div className="min-h-screen">
-      <DashboardHeader />
+      <DashboardHeader projects={[]} selectedProject={null} />
       <main className="mx-auto w-full max-w-7xl px-6 py-10 sm:px-8">
         <div className="mb-8 flex items-end justify-between gap-4">
           <div>
