@@ -1,19 +1,10 @@
-import { Project, ProjectListItem } from "@/modules/projects";
 import { DashboardSidebar } from "../components/DashboardSidebar";
 import { DashboardHeader } from "./DashboardHeader";
 
-interface Props {
-  projects: ProjectListItem[];
-  selectedProject: Project | null;
-}
-
-export function DashboardHome(props: Props) {
+export function DashboardHome() {
   return (
     <div className="min-h-screen bg-muted/30 p-3 sm:p-4">
-      <DashboardHeader
-        projects={props.projects}
-        selectedProject={props.selectedProject}
-      />
+      <DashboardHeader />
       <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-4 pt-4 md:flex-row">
         <DashboardSidebar />
         <main

@@ -1,5 +1,5 @@
-import { DashboardHome } from "@/modules/dashboard/containers";
+import { redirect } from "next/navigation";
 
-export default async function HomePage() {
-  return <DashboardHome projects={[]} selectedProject={null} />;
+export default async function LandingPage() {
+  return redirect("dashboard");
 }

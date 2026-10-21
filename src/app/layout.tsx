@@ -1,7 +1,7 @@
+import "./globals.css";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { TooltipProvider } from "@/components/ui/overlays";
-import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import type { ReactNode } from "react";
 
@@ -24,7 +24,11 @@ export const metadata: Metadata = {
   description: "A focused workspace for managing projects and team work.",
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   return (
     <html
       lang="en"

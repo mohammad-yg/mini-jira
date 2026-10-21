@@ -13,7 +13,7 @@ type Props = {
 export function ProjectsPageContainer({ initialProjects }: Props) {
   return (
     <div className="min-h-screen">
-      <DashboardHeader projects={[]} selectedProject={null} />
+      <DashboardHeader />
       <main className="mx-auto w-full max-w-7xl px-6 py-10 sm:px-8">
         <div className="mb-8 flex items-end justify-between gap-4">
           <div>

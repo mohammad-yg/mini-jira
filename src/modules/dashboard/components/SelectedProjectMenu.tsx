@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Check, ChevronDown, FolderKanban } from "lucide-react";
 import { Button } from "@/components/ui/actions/Button";
@@ -11,14 +13,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/overlays/DropdownMenu";
 import paths from "@/lib/paths.constants";
-import { Project, ProjectListItem } from "@/modules/projects";
+import { useDashboardStore } from "@/providers/store-provider";
 
-type Props = {
-  projects: ProjectListItem[];
-  selectedProject: Project | null;
-};
+export function SelectedProjectMenu() {
+  const projectsStore = useDashboardStore((s) => s);
+  const { projects, selectedProject } = projectsStore;
 
-export function SelectedProjectMenu({ projects, selectedProject }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -26,7 +26,7 @@ export function SelectedProjectMenu({ projects, selectedProject }: Props) {
           <Button
             variant="ghost"
             className="h-10 min-w-0 max-w-44 justify-start gap-2 px-2 sm:max-w-56"
-            aria-label={`Open project menu. Selected project: ${selectedProject?.name}`}
+            // aria-label={`Open project menu. Selected project: ${selectedProject?.name}`}
           />
         }
       >
