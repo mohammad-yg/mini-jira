@@ -1,5 +1,7 @@
+export type ProjectId = string;
+
 export interface Project {
-  id: string;
+  id: ProjectId;
   name: string;
   key: string;
   description?: string;
