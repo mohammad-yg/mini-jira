@@ -11,6 +11,9 @@ import type {
 } from "../api-client.type";
 import type { ApiResponse, ApiResponseError } from "../api-response.type";
 import { ServerApiClient } from "./api-client-server.type";
+import { cookies, headers } from "next/headers";
+import { auth } from "@/auth.server";
+import { getToken } from "next-auth/jwt";
 
 const buildUrl = (
   path: string,
@@ -94,12 +97,30 @@ const getResponseError = (
   };
 };
 
+export async function getBackendToken() {
+  const req = {
+    headers: Object.fromEntries((await headers()).entries()),
+    cookies: Object.fromEntries(
+      (await cookies()).getAll().map((c) => [c.name, c.value])
+    ),
+  };
+
+  const token = await getToken({
+    req,
+    secret: process.env.AUTH_SECRET,
+  });
+
+  return token?.backendAccessToken as string | undefined;
+}
+
 const createRequest =
   (apiBaseUrl: string, fetcher: typeof fetch, defaultHeaders?: HeadersInit) =>
     async <TData, TBody>(
       path: string,
       config: ApiRequestConfig<TBody>,
     ): Promise<ApiResponse<TData>> => {
+      const backToken = await getBackendToken();
+
       const headers = new Headers(defaultHeaders);
       new Headers(config.headers).forEach((value, key) =>
         headers.set(key, value),
@@ -109,6 +130,9 @@ const createRequest =
       const hasBody = config.body !== undefined;
       if (hasBody && !headers.has("Content-Type")) {
         headers.set("Content-Type", "application/json");
+      }
+      if (backToken) {
+        headers.set('Authorization', 'Bearer ' + (backToken))
       }
 
       try {
