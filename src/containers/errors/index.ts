@@ -1,0 +1,1 @@
+export { ErrorFullPage } from './ErrorFullPage'
