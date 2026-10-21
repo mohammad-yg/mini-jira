@@ -8,10 +8,12 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
+    "check:architecture": "eslint --config scripts/architecture-eslint.config.mjs src",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "prepare": "husky"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
@@ -54,7 +56,9 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.7",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.7",
     "eslint-plugin-storybook": "^10.6.1",
+    "husky": "^9.1.7",
     "playwright": "^1.63.0",
     "prettier": "^3.9.9",
     "storybook": "^10.6.1",

@@ -34,7 +34,7 @@ The diagram shows available paths, not a single request path. Sign-in goes throu
 | `src/modules/dashboard/`                                   | Dashboard-owned display data and UI; its containers compose only dashboard features                                             |
 | `src/modules/[module-name]/index.ts`                       | Public module API for symbols intended for use by other modules or app composition                                              |
 | `src/modules/[module-name]/*/index.ts`                     | Public API of a module subfolder; external consumers use barrels instead of implementation paths                                |
-| `src/components/`, `src/hooks/`, `src/lib/`, `src/shared/` | Cross-module UI, hooks, utilities, and generic contracts/services                                                               |
+| `src/components/`, `src/hooks/`, `src/lib/`, `src/shared/` | Cross-module UI, hooks, technical utilities, and generic application contracts                                                  |
 | `src/app/auth/`                                            | Sign-in and sign-up route entry points                                                                                          |
 | `src/app/api/auth/[...nextauth]/route.ts`                  | Exposes Auth.js handlers                                                                                                        |
 | `src/app/api/bff/auth/[...authPath]/route.ts`              | Same-origin auth endpoints; this catch-all only allows auth operations                                                          |
@@ -66,18 +66,32 @@ Apply these rules to every new or changed project-owned file and identifier. Whe
 
 Treat filename markers as semantic classification, not decoration: a `.server` implementation must not enter a client dependency graph, and `.client` code must not import server-only modules. A file may use only the marker matching its primary responsibility. A factory function that is part of an implementation does not change that file's primary role; use `.factory` only when the file contains factory definitions without an implementation. Split files when they combine unrelated responsibilities.
 
+ESLint enforces the Prettier formatting contract through its recommended Prettier integration. Formatting violations are lint errors; run `npm run format` to apply formatting and `npm run lint` to verify it. Do not disable the Prettier ESLint rule for project files merely to silence a formatting error.
+
+ESLint enforces the Prettier formatting contract through its recommended Prettier integration. Formatting violations are lint errors; run `npm run format` to apply formatting and `npm run lint` to verify it. Do not disable the Prettier ESLint rule for project files merely to silence a formatting error.
+
 Before adding a new file, identify its role and apply the matching rule. If a Next.js reserved filename or external contract conflicts with a general rule, preserve the required external name and document/adapt the boundary.
 
 ## Module boundaries and imports
 
 - Put feature-owned UI, custom hooks, use cases/actions, queries, services, schemas, types, data, and single-module containers under `src/modules/[module-name]/`.
 - Keep generic or cross-module code under shared root areas such as `src/components/`, `src/hooks/`, `src/lib/`, and `src/shared/`. Keep Next.js route entry points under `src/app/`.
-- Use `src/lib/registry/` for dependency composition. Follow the AI-first DI contracts below and check the current migration status before relying on a registry.
-- A module may import its own implementation directly. Code outside a module must import only through its `src/modules/[module-name]/index.ts` or the appropriate subfolder `index.ts`; do not reach into another module's implementation files.
-- Export every cross-boundary symbol from its owning subfolder barrel and the module root barrel. Keep implementation-only symbols private.
-- Modules may depend on shared code and another module's public API. Keep the module dependency graph acyclic; move genuinely common contracts or logic to `src/shared/` instead of adding peer-to-peer implementation imports.
+- Put reusable technical capabilities without feature-domain meaning in `src/lib/` (for example, logging or HTTP transport). Put generic application contracts and helpers shared across features in `src/shared/`. Feature-specific behavior stays with its owning feature.
+- A module may import its own implementation directly. Cross-feature imports must use the other feature's root API or a subfolder public barrel; do not import another feature's implementation file. Imports inside the same feature remain unrestricted by this rule.
+- The module root `src/modules/[module-name]/index.ts` is its public API. List every export explicitly; `export *` is prohibited in module root barrels. Subfolder barrels may group their own named exports.
+- Modules may depend on shared code and another module's public API. Keep the module dependency graph acyclic. Shared libraries must not depend on feature modules. This rule does not prescribe internal import paths within a module or library.
+- Keep runtime boundaries explicit: client code must not import server-only implementations or `server-only`; server-only implementations must not enter the client dependency graph. Pure type imports are acceptable only when the imported contract does not pull server runtime code into the client bundle. Next.js remains responsible for detecting transitive runtime violations.
+- Use ESLint's fast architecture check (`npm run check:architecture`) to check module root exports, cross-feature implementation imports, and direct client-to-server imports. The check intentionally does not constrain imports within one feature or library.
 - Put a container under `src/modules/[module-name]/containers/` when it composes only that module. Put it under `src/containers/` when it composes two or more modules. Route pages stay under `src/app/` and should delegate substantial composition to a suitable container.
+- A UI container composes presentation and feature components by passing data and callbacks. Keep data fetching, HTTP details, and feature workflow in the appropriate hook, service, or use case.
 - Use consistent folder naming, including `hooks/` (plural) and the established `components/`, `containers/`, `actions/`, `queries/`, `services/`, `schemas/`, and `types/` folders.
+
+## Test placement
+
+- Keep focused tests for one file or one small behavior with the code they verify: use a Storybook story (`*.stories.tsx`) for component examples and UI interaction tests, or a companion test file (`*.test.ts` / `*.test.tsx`) for unit tests.
+- Put tests that exercise several parts of a feature module or a broader module workflow in that module's `__tests__/` directory. For example, use `src/modules/projects/__tests__/` for a flow that spans the projects hook, query, and request.
+- Test files are development-only artifacts. Do not re-export them from a module's public `index.ts` barrel.
+- Place tests for behavior spanning the whole application outside individual feature modules, in a clearly scoped integration or end-to-end test location.
 
 ## Registry and dependency-injection behavior
 

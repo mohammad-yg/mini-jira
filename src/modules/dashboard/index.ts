@@ -1,3 +1,1 @@
-export * from "./components";
-export * from "./containers";
-export * from "./types";
+export { DashboardHeader, DashboardHome } from "./containers";

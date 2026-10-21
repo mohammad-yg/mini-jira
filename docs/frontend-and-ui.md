@@ -28,7 +28,7 @@ The projects list lives under `src/modules/projects/`. Its query factory maps th
 
 - Follow the AI-first file and identifier naming rules in [architecture](architecture.md#file-and-identifier-naming-ai-first-contract). Preserve Next.js reserved route filenames and framework callback prop names; name project-owned handlers `handle...` and boolean identifiers with predicate prefixes.
 
-- Add a Storybook story beside reusable UI components using the existing `*.stories.tsx` naming pattern.
+- Add a Storybook story beside reusable UI components using the existing `*.stories.tsx` naming pattern. Use stories for focused component examples and UI interaction tests; see [architecture](architecture.md#test-placement) for the project-wide test placement rule.
 - Re-export category-level components through the existing `index.ts` files when that is the established pattern in the category.
 - Reuse semantic HTML, accessible labels, keyboard behavior, and existing CSS variables before introducing a one-off primitive.
 - Global theme colors, radii, font variables, and dark-mode values are defined in `src/app/globals.css`; Geist font files and setup live under `src/app/fonts/` and `src/app/layout.tsx`.

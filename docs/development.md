@@ -23,18 +23,19 @@ The mock API also reads `PORT` and `JWT_SECRET`; see [mock-server/README.md](../
 
 ### Repository root
 
-| Command                   | Purpose                                           |
-| ------------------------- | ------------------------------------------------- |
-| `npm run dev`             | Start Next.js development server                  |
-| `npm run build`           | Run `next build --webpack`                        |
-| `npm run start`           | Start the production Next.js server               |
-| `npm run lint`            | Run ESLint                                        |
-| `npm run format`          | Format the repository with Prettier               |
-| `npm run format:check`    | Check repository formatting without writing files |
-| `npm run storybook`       | Start Storybook on port 6006                      |
-| `npm run build-storybook` | Build static Storybook output                     |
-| `npm run mock-server`     | Start the mock server package in watch mode       |
-| `npx vitest run`          | Run configured browser-based Storybook play tests |
+| Command                      | Purpose                                                                  |
+| ---------------------------- | ------------------------------------------------------------------------ |
+| `npm run dev`                | Start Next.js development server                                         |
+| `npm run build`              | Run `next build --webpack`                                               |
+| `npm run start`              | Start the production Next.js server                                      |
+| `npm run lint`               | Run ESLint, including required Prettier formatting checks                |
+| `npm run check:architecture` | Run the fast module-boundary ESLint checks; also runs before each commit |
+| `npm run format`             | Format the repository with Prettier                                      |
+| `npm run format:check`       | Check repository formatting without writing files                        |
+| `npm run storybook`          | Start Storybook on port 6006                                             |
+| `npm run build-storybook`    | Build static Storybook output                                            |
+| `npm run mock-server`        | Start the mock server package in watch mode                              |
+| `npx vitest run`             | Run configured browser-based Storybook play tests                        |
 
 ### Mock server
 
