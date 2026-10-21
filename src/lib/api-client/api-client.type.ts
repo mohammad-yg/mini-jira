@@ -16,7 +16,7 @@ export interface ApiRequestOptions {
   signal?: AbortSignal;
   credentials?: RequestCredentials;
   baseUrl?: string;
-  cookies?: AppCookies
+  cookies?: AppCookies;
 }
 
 export interface ApiRequestConfig<TBody = unknown> extends ApiRequestOptions {

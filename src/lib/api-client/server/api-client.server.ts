@@ -101,7 +101,7 @@ export async function getBackendToken() {
   const req = {
     headers: Object.fromEntries((await headers()).entries()),
     cookies: Object.fromEntries(
-      (await cookies()).getAll().map((c) => [c.name, c.value])
+      (await cookies()).getAll().map((c) => [c.name, c.value]),
     ),
   };
 
@@ -115,92 +115,96 @@ export async function getBackendToken() {
 
 const createRequest =
   (apiBaseUrl: string, fetcher: typeof fetch, defaultHeaders?: HeadersInit) =>
-    async <TData, TBody>(
-      path: string,
-      config: ApiRequestConfig<TBody>,
-    ): Promise<ApiResponse<TData>> => {
-      const backToken = await getBackendToken();
+  async <TData, TBody>(
+    path: string,
+    config: ApiRequestConfig<TBody>,
+  ): Promise<ApiResponse<TData>> => {
+    const backToken = await getBackendToken();
 
-      const headers = new Headers(defaultHeaders);
-      new Headers(config.headers).forEach((value, key) =>
-        headers.set(key, value),
-      );
-      headers.set("Accept", "application/json");
+    const headers = new Headers(defaultHeaders);
+    new Headers(config.headers).forEach((value, key) =>
+      headers.set(key, value),
+    );
+    headers.set("Accept", "application/json");
 
-      const hasBody = config.body !== undefined;
-      if (hasBody && !headers.has("Content-Type")) {
-        headers.set("Content-Type", "application/json");
+    const hasBody = config.body !== undefined;
+    if (hasBody && !headers.has("Content-Type")) {
+      headers.set("Content-Type", "application/json");
+    }
+    if (backToken) {
+      headers.set("Authorization", "Bearer " + backToken);
+    }
+
+    try {
+      const response = await fetcher(buildUrl(path, config.query, apiBaseUrl), {
+        method: config.method,
+        headers,
+        body: hasBody ? JSON.stringify(config.body) : undefined,
+        signal: config.signal,
+        credentials: config.credentials,
+        cache: "no-store",
+      });
+      const payload = await readResponse(response);
+
+      if (!response.ok) {
+        return createErrorApiResponse<TData>(
+          getResponseError(response.status, payload),
+          response.status,
+        );
       }
-      if (backToken) {
-        headers.set('Authorization', 'Bearer ' + (backToken))
-      }
 
-      try {
-        const response = await fetcher(buildUrl(path, config.query, apiBaseUrl), {
-          method: config.method,
-          headers,
-          body: hasBody ? JSON.stringify(config.body) : undefined,
-          signal: config.signal,
-          credentials: config.credentials,
-          cache: "no-store",
-        });
-        const payload = await readResponse(response);
-
-        if (!response.ok) {
-          return createErrorApiResponse<TData>(
-            getResponseError(response.status, payload),
-            response.status,
-          );
-        }
-
-        return createSuccessApiResponse(payload as TData, response.status);
-      } catch (error) {
-        return createErrorApiResponse<TData>({
-          message:
-            error instanceof Error ? error.message : "Network request failed",
-          code:
-            error instanceof DOMException && error.name === "AbortError"
-              ? "ABORTED"
-              : "NETWORK_ERROR",
-        });
-      }
-    };
+      return createSuccessApiResponse(payload as TData, response.status);
+    } catch (error) {
+      return createErrorApiResponse<TData>({
+        message:
+          error instanceof Error ? error.message : "Network request failed",
+        code:
+          error instanceof DOMException && error.name === "AbortError"
+            ? "ABORTED"
+            : "NETWORK_ERROR",
+      });
+    }
+  };
 
 /** Builds a server API client with an optional request-scoped bearer token. */
-export const createServerApiClient =
-  ({
-    fetcher,
-    serverBaseUrl
-  }: {
-    fetcher: typeof fetch,
-    serverBaseUrl: string,
-  }): ServerApiClient => {
-    const defaultHeaders: HeadersInit = {
-    };
+export const createServerApiClient = ({
+  fetcher,
+  serverBaseUrl,
+}: {
+  fetcher: typeof fetch;
+  serverBaseUrl: string;
+}): ServerApiClient => {
+  const defaultHeaders: HeadersInit = {};
 
-    const request = createRequest(serverBaseUrl, fetcher, defaultHeaders);
+  const request = createRequest(serverBaseUrl, fetcher, defaultHeaders);
 
-    const withMethod =
-      (method: ApiRequestConfig["method"]) =>
-        <TData = unknown, TBody = unknown>(
-          url: string,
-          body?: TBody,
-          options: ApiRequestOptions = {},
-        ) =>
-          request<TData, TBody>(url, { baseUrl: serverBaseUrl, ...options, method, body });
+  const withMethod =
+    (method: ApiRequestConfig["method"]) =>
+    <TData = unknown, TBody = unknown>(
+      url: string,
+      body?: TBody,
+      options: ApiRequestOptions = {},
+    ) =>
+      request<TData, TBody>(url, {
+        baseUrl: serverBaseUrl,
+        ...options,
+        method,
+        body,
+      });
 
-    return {
-      request,
-      get: (url, options = {}) => request(url, { baseUrl: serverBaseUrl, ...options, method: "GET" }),
-      post: withMethod("POST"),
-      put: withMethod("PUT"),
-      patch: withMethod("PATCH"),
-      delete: (url, options = {}) =>
-        request(url, {
-          baseUrl: serverBaseUrl,
-          ...options,
-          method: "DELETE",
-          body: options.body,
-        }),
-    };
+  return {
+    request,
+    get: (url, options = {}) =>
+      request(url, { baseUrl: serverBaseUrl, ...options, method: "GET" }),
+    post: withMethod("POST"),
+    put: withMethod("PUT"),
+    patch: withMethod("PATCH"),
+    delete: (url, options = {}) =>
+      request(url, {
+        baseUrl: serverBaseUrl,
+        ...options,
+        method: "DELETE",
+        body: options.body,
+      }),
   };
+};

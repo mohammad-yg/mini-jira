@@ -1,5 +1,8 @@
 import { serverGlobalRegistry } from "@/lib/registry/server/registry-instance.server";
-import type { AuthRegisterDto, AuthRegistrationResponse } from "@/modules/auth/types";
+import type {
+  AuthRegisterDto,
+  AuthRegistrationResponse,
+} from "@/modules/auth/types";
 import { cookies } from "next/headers";
 
 export const runtime = "nodejs";
@@ -33,7 +36,7 @@ export async function POST(request: Request) {
     return errorResponse("Name, email, and password are required", 400);
   }
 
-  const { apiClient } = (await serverGlobalRegistry());
+  const { apiClient } = await serverGlobalRegistry();
   const result = await apiClient.post<
     AuthRegistrationResponse,
     AuthRegisterDto
@@ -42,7 +45,6 @@ export async function POST(request: Request) {
     email: dto.email,
     password: dto.password,
   });
-
 
   if (!result.ok || !result.data) {
     return errorResponse(

@@ -1,1 +1,1 @@
-export type { Logger, LoggerOptions } from './logger.type'
+export type { Logger, LoggerOptions } from "./logger.type";

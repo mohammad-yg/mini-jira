@@ -3,12 +3,15 @@
 import { create } from "zustand";
 
 import type { GetProjectTasksQuery } from "@/modules/projects/types";
-import { DashboardStore, DashboardStoreSeeds, DashboardStoreState } from "../types/dashboard-store.type";
-
+import {
+  DashboardStore,
+  DashboardStoreSeeds,
+  DashboardStoreState,
+} from "../types/dashboard-store.type";
 
 type DashboardUseCases = {
-  getProjectTasksQuery: GetProjectTasksQuery
-}
+  getProjectTasksQuery: GetProjectTasksQuery;
+};
 
 export const createDashboardStore = (
   seed: DashboardStoreSeeds,
@@ -21,11 +24,9 @@ export const createDashboardStore = (
     isLoadingSelectedProjectTasks: false,
 
     handleSelectProject: async (projectId) => {
-      const nextProject = get().projects.find(_ => _.id === projectId);
+      const nextProject = get().projects.find((_) => _.id === projectId);
 
-      if (!nextProject)
-        throw new Error('Selected project not found');
-
+      if (!nextProject) throw new Error("Selected project not found");
 
       set({
         selectedProject: nextProject,
@@ -39,8 +40,7 @@ export const createDashboardStore = (
         const result = await useCases.getProjectTasksQuery(nextProject.id);
 
         if (!result.success) {
-        }
-        else {
+        } else {
           set({ selectedProjectTasks: result.data });
         }
       } finally {

@@ -1,4 +1,4 @@
-import 'server-only'
+import "server-only";
 
 import { getToken } from "next-auth/jwt";
 import { headers } from "next/headers";
@@ -48,4 +48,4 @@ export const getAuthentication = async (): Promise<Authentication> => {
   } catch {
     return unauthenticated;
   }
-}
+};

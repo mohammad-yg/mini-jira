@@ -1,6 +1,12 @@
 "use client";
 
-import type { ClientLogEntry, ClientLogPayload, LogLevel, Logger, LoggerOptions } from "../logger.type";
+import type {
+  ClientLogEntry,
+  ClientLogPayload,
+  LogLevel,
+  Logger,
+  LoggerOptions,
+} from "../logger.type";
 
 const DEFAULT_APP_NAME = "Mini Jira";
 const LOGS_BFF_ENDPOINT = "/api/bff/logs";
@@ -128,14 +134,14 @@ export const createClientLogger = ({
 
   const write =
     (level: LogLevel) =>
-      (...values: unknown[]) => {
-        logQueue.push({
-          app: appName,
-          level,
-          timestamp: new Date().toISOString(),
-          values: serializeValues(values),
-        });
-      };
+    (...values: unknown[]) => {
+      logQueue.push({
+        app: appName,
+        level,
+        timestamp: new Date().toISOString(),
+        values: serializeValues(values),
+      });
+    };
 
   return Object.freeze({
     debug: write("debug"),

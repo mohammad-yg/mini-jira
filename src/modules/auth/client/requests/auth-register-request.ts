@@ -1,5 +1,9 @@
 import type { ApiClient } from "@/lib/api-client";
-import { AuthRegisterDto, AuthRegisterRequest, AuthRegistrationResponse } from "../../types";
+import {
+  AuthRegisterDto,
+  AuthRegisterRequest,
+  AuthRegistrationResponse,
+} from "../../types";
 
 type Dependencies = {
   apiClient: ApiClient;

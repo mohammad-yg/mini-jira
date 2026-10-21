@@ -1,1 +1,1 @@
-export { createGetProjectsListRequest } from './get-projects-list.client'
+export { createGetProjectsListRequest } from "./get-projects-list.client";

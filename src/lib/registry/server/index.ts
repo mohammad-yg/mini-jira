@@ -1,3 +1,3 @@
-import 'server-only'
+import "server-only";
 
-export { serverGlobalRegistry } from './registry-instance.server'
+export { serverGlobalRegistry } from "./registry-instance.server";

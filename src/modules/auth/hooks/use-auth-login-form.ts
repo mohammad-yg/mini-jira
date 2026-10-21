@@ -22,7 +22,8 @@ export const useAuthLoginForm = () => {
 
   const handleLoginSubmit = handleSubmit(async (credentials) => {
     try {
-      const result = await clientAuthRegistry.get("authLoginAction")(credentials);
+      const result =
+        await clientAuthRegistry.get("authLoginAction")(credentials);
       if (!result || result.error) {
         setError("root.server", { message: "Email or password is incorrect." });
         return;

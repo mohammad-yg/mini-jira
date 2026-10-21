@@ -1,9 +1,8 @@
-import 'server-only'
+import "server-only";
 
-import { AppConfig } from '@/config/types';
-import { createServerApiClient } from '@/lib/api-client/server';
-import { createServerLogger } from '@/lib/logger/server';
-
+import { AppConfig } from "@/config/types";
+import { createServerApiClient } from "@/lib/api-client/server";
+import { createServerLogger } from "@/lib/logger/server";
 
 const API_SERVER_BASE_URL = process.env.NEXT_PUBLIC_API_SERVER_BASE_URL;
 const APP_BASE_URL = process.env.NEXT_PUBLIC_APP_BASE_URL;
@@ -13,17 +12,20 @@ export const serverGlobalRegistry = async () => {
   const config: AppConfig = {
     apiServerBaseUrl: API_SERVER_BASE_URL,
     appBaseUrl: APP_BASE_URL,
-    appName: APP_NAME
-  }
+    appName: APP_NAME,
+  };
 
-  const apiClient = createServerApiClient({ fetcher: fetch, serverBaseUrl: config.apiServerBaseUrl });
+  const apiClient = createServerApiClient({
+    fetcher: fetch,
+    serverBaseUrl: config.apiServerBaseUrl,
+  });
   const logger = createServerLogger({
-    appName: config.appName
-  })
+    appName: config.appName,
+  });
 
   return {
     config,
     apiClient,
-    logger
-  }
-}
+    logger,
+  };
+};

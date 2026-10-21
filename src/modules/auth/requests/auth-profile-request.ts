@@ -1,6 +1,9 @@
 "use client";
 
-import { createErrorApiResponse, createSuccessApiResponse } from "@/lib/api-client";
+import {
+  createErrorApiResponse,
+  createSuccessApiResponse,
+} from "@/lib/api-client";
 import { getSession } from "next-auth/react";
 import type { AuthGetUserProfileRequest } from "../types/auth-requests.type";
 import type { AuthUser } from "../types/auth.type";

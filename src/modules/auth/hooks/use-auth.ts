@@ -10,13 +10,13 @@ export const useAuth = () => {
   const logout = (redirect: (path: string) => void) => {
     clientAuthRegistry.get("authLogoutAction")();
     redirect(paths.auth.signIn);
-  }
+  };
 
   return {
     user: session?.user ?? null,
     isAuthenticated: status === "authenticated",
     isLoading: status === "loading",
     error: null,
-    logout
+    logout,
   };
 };

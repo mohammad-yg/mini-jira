@@ -1,3 +1,3 @@
-import 'server-only'
+import "server-only";
 
-export { createServerGetProjectsRequest } from './get-projects-request.server'
+export { createServerGetProjectsRequest } from "./get-projects-request.server";

@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import type { AuthUser } from "@/modules/auth/types";
 import type { AuthLoginResponse, AuthTokens } from "@/modules/auth/types";
-import { serverGlobalRegistry } from '@/lib/registry/server'
+import { serverGlobalRegistry } from "@/lib/registry/server";
 
 const getBackendApiClient = async () =>
   (await serverGlobalRegistry()).apiClient;
@@ -37,10 +37,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           typeof credentials.password === "string" ? credentials.password : "";
         if (!email || !password) return null;
 
-        const response = await (await getBackendApiClient()).post<
-          AuthLoginResponse,
-          { email: string; password: string }
-        >("auth/login", { email, password });
+        const response = await (
+          await getBackendApiClient()
+        ).post<AuthLoginResponse, { email: string; password: string }>(
+          "auth/login",
+          { email, password },
+        );
         if (!response.ok || !response.data?.user) return null;
 
         const user = response.data.user;
@@ -86,10 +88,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return token;
       }
 
-      const refreshed = await (await getBackendApiClient()).post<AuthTokens>(
-        "auth/refresh",
-        { refreshToken },
-      );
+      const refreshed = await (
+        await getBackendApiClient()
+      ).post<AuthTokens>("auth/refresh", { refreshToken });
       if (!refreshed.ok || !refreshed.data) {
         token.authError = "RefreshAccessTokenError";
         return token;
@@ -121,7 +122,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         "token" in event ? event.token?.backendAccessToken : undefined;
       if (!accessToken) return;
 
-      await (await getBackendApiClient()).post<null>("auth/logout", undefined, {
+      await (
+        await getBackendApiClient()
+      ).post<null>("auth/logout", undefined, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
     },

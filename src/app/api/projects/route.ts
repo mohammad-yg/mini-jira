@@ -16,8 +16,7 @@ export async function GET(): Promise<Response> {
     return Response.json(
       { error: result.error },
       {
-        status:
-          result.statusCode ?? getErrorStatus(result.error?.code),
+        status: result.statusCode ?? getErrorStatus(result.error?.code),
       },
     );
   }

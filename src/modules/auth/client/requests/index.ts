@@ -1,1 +1,1 @@
-export { createClientAuthRegisterRequest } from './auth-register-request'
+export { createClientAuthRegisterRequest } from "./auth-register-request";
